@@ -1,0 +1,20 @@
+before_install:
+- curl -L -o ~/bin/mill "https://github.com/lihaoyi/mill/releases/download/0.3.6/0.3.6" && chmod +x ~/bin/mill
+- PATH=~/bin/mill:$PATH
+
+language: scala
+jdk: openjdk11
+
+stages:
+- name: test
+- name: publish
+  if: branch = master
+
+jobs:
+  include:
+  - stage: test
+    name: Build
+    script: ./.ci_scripts/build.sh
+  - stage: publish
+    name: Publish
+    script: ./.ci_scripts/publish.sh
