@@ -18,7 +18,7 @@ trait ApiRoutes extends JsonSupport {
       concat(
         path("about") {
           get {
-            complete((StatusCodes.OK, About("cowsay-online", "v1")))
+            complete((StatusCodes.OK, About("v1")))
           }
         },
         path("talk") {

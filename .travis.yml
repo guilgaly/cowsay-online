@@ -17,4 +17,5 @@ jobs:
     script: ./.ci_scripts/build.sh
   - stage: deploy
     name: Deploy
+    before_script: heroku plugins:install java
     script: ./.ci_scripts/deploy.sh

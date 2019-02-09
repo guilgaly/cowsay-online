@@ -1,10 +1,16 @@
 import $file.dependencies
 import $file.settings
+import $ivy.`com.lihaoyi::mill-contrib-buildinfo:0.3.6`
 import mill._
+import mill.api.PathRef
+import mill.contrib.BuildInfo
 import mill.scalalib._
 import mill.scalalib.scalafmt.ScalafmtModule
 
-object server extends ScalaModule with ScalafmtModule {
+object server extends ScalaModule with ScalafmtModule with BuildInfo {
+
+  def publishVersion = "0.1.0-SNAPSHOT"
+
   override def scalaVersion = settings.scalaVersion
   override def scalacOptions = settings.scalacOptions
   override def ivyDeps = Agg(
@@ -18,6 +24,27 @@ object server extends ScalaModule with ScalafmtModule {
     dependencies.logging.slf4jSimple,
     dependencies.enumeratum,
   )
+
+  this.compile
+
+  override def buildInfoMembers: T[Map[String, String]] = T {
+    Map(
+      "name" -> "cowsay-online",
+      "version" -> publishVersion,
+      "scalaVersion" -> scalaVersion()
+    )
+  }
+  override def buildInfoPackageName = Some("cowsayonline")
+  override def buildInfoObjectName = "BuildInfo"
+  override def generatedSources = T {
+    val dir = T.ctx().dest
+    val buildInfoPathRefs = buildInfo()
+    buildInfoPathRefs.foreach { pathRef =>
+      val fileName = pathRef.path.last
+      os.copy(pathRef.path, dir / fileName)
+    }
+    Seq(PathRef(dir))
+  }
 
   object test extends Tests with ScalafmtModule {
     override def testFrameworks = Seq("org.scalatest.tools.Framework")
