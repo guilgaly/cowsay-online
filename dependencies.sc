@@ -2,7 +2,7 @@ import mill.scalalib._
 
 /** 'nuff said. */
 object cowsay4s {
-  val core = ivy"fr.ggaly::cowsay4s-core:0.1.0"
+  val core = ivy"fr.ggaly::cowsay4s-core:0.1.1"
 }
 
 /** Web server (akka-http). */
