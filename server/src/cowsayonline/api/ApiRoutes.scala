@@ -13,12 +13,11 @@ import cowsayonline.api.model.{About, TalkCommand}
 trait ApiRoutes extends JsonSupport {
 
   implicit protected def system: ActorSystem
-  private lazy val log = Logging(system, classOf[ApiRoutes])
 
   lazy val apiRoutes: Route =
     pathPrefix("api") {
       concat(
-        pathEnd {
+        path("about") {
           get {
             complete((StatusCodes.OK, About("cowsay-online", "v1")))
           }

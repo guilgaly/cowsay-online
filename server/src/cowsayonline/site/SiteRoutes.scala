@@ -13,7 +13,6 @@ import cowsayonline.site.views.Home
 trait SiteRoutes {
 
   implicit protected def system: ActorSystem
-  private lazy val log = Logging(system, classOf[SiteRoutes])
 
   lazy val siteRoutes: Route =
     encodeResponse {
