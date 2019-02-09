@@ -15,6 +15,6 @@ jobs:
   - stage: test
     name: Build
     script: ./.ci_scripts/build.sh
-  - stage: publish
-    name: Publish
-    script: ./.ci_scripts/publish.sh
+  - stage: deploy
+    name: Deploy
+    script: ./.ci_scripts/deploy.sh
