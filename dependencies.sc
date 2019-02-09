@@ -33,7 +33,10 @@ object logging {
 }
 
 /** Enumerations. */
-val enumeratum = ivy"com.beachape::enumeratum::1.5.13"
+object enumeratum {
+  val core = ivy"com.beachape::enumeratum::1.5.13"
+  val playJson = ivy"com.beachape::enumeratum-play-json:1.5.16"
+}
 
 /** Tests. */
 val scalatest = ivy"org.scalatest::scalatest::3.0.5"

@@ -17,8 +17,9 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import cowsayonline.api.ApiRoutes
 import cowsayonline.site.SiteRoutes
+import cowsayonline.slack.SlackRoutes
 
-object Server extends SiteRoutes with ApiRoutes {
+object Server extends SiteRoutes with ApiRoutes with SlackRoutes {
   private lazy val log = Logging(system, Server.getClass)
 
   private val config = ConfigFactory.load()
@@ -29,7 +30,7 @@ object Server extends SiteRoutes with ApiRoutes {
 
   private lazy val routes: Route =
     redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
-      concat(siteRoutes, apiRoutes)
+      concat(siteRoutes, apiRoutes, slackRoutes)
     }
 
   def main(args: Array[String]): Unit = {
