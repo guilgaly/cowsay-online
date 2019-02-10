@@ -2,7 +2,7 @@ import mill.scalalib._
 
 /** 'nuff said. */
 object cowsay4s {
-  val core = ivy"fr.ggaly::cowsay4s-core:0.1.1"
+  val core = ivy"fr.ggaly::cowsay4s-core:0.1.2-SNAPSHOT"
 }
 
 /** Web server (akka-http). */
@@ -36,6 +36,10 @@ object logging {
 object enumeratum {
   val core = ivy"com.beachape::enumeratum::1.5.13"
   val playJson = ivy"com.beachape::enumeratum-play-json:1.5.16"
+}
+
+object apacheCommons {
+  val text = ivy"org.apache.commons:commons-text:1.6"
 }
 
 /** Tests. */

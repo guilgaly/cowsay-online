@@ -1,3 +1,9 @@
+import coursier.maven.MavenRepository
+
+val customRepositories = Seq(
+  MavenRepository("https://oss.sonatype.org/content/repositories/snapshots"),
+)
+
 val scalaVersion = "2.12.8"
 
 /**

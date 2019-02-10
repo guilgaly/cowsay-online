@@ -13,6 +13,8 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
 
   override def scalaVersion = settings.scalaVersion
   override def scalacOptions = settings.scalacOptions
+
+  override def repositories = super.repositories ++ settings.customRepositories
   override def ivyDeps = Agg(
     dependencies.cowsay4s.core,
     dependencies.akka.stream,
@@ -24,6 +26,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     dependencies.logging.slf4jSimple,
     dependencies.enumeratum.core,
     dependencies.enumeratum.playJson,
+    dependencies.apacheCommons.text,
   )
 
   this.compile
