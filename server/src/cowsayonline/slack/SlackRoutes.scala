@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.directives.MethodDirectives.post
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core.CowAction
 import cowsayonline.JsonSupport
+import cowsayonline.slack.model.SlashCommand
 
 trait SlackRoutes extends JsonSupport {
 
@@ -18,15 +19,20 @@ trait SlackRoutes extends JsonSupport {
       concat(
         path("talk") {
           post {
-            formFields(("user_id", "text", "ssl_check".as[Int].?)) {
-              (userId, text, sslCheck) =>
+            formFields(
+              (
+                "command".as[SlashCommand],
+                "user_id",
+                "text",
+                "ssl_check".as[Int].?)) {
+              (command, userId, text, sslCheck) =>
                 sslCheck match {
                   case Some(1) =>
                     complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "OK"))
                   case _ =>
                     println(s"Received cowsay text: $text")
                     val commandResponse =
-                      TalkingSlack.talk(userId, text, CowAction.CowSay)
+                      TalkingSlack.talk(command, userId, text)
                     complete((StatusCodes.OK, commandResponse))
                 }
             }

@@ -1,8 +1,8 @@
 package cowsayonline.site.model
 
-import akka.http.scaladsl.unmarshalling.{FromStringUnmarshaller, Unmarshaller}
+import akka.http.scaladsl.unmarshalling.FromStringUnmarshaller
 import cowsay4s.core.{CowAction, CowMode, DefaultCow}
-import enumeratum.{Enum, EnumEntry}
+import cowsayonline.util.MarshallingUtils
 
 case class TalkCommand(
     message: String,
@@ -29,22 +29,12 @@ object TalkCommand {
   object Unmarshallers {
 
     implicit val cowActionUnmarshaller: FromStringUnmarshaller[CowAction] =
-      enumUnmarshaller(CowAction, "action")
+      MarshallingUtils.enumFromStringUnmarshaller(CowAction, "action")
 
     implicit val cowModeUnmarshaller: FromStringUnmarshaller[CowMode] =
-      enumUnmarshaller(CowMode, "mode")
+      MarshallingUtils.enumFromStringUnmarshaller(CowMode, "mode")
 
     implicit val defaultCowUnmarshaller: FromStringUnmarshaller[DefaultCow] =
-      enumUnmarshaller(DefaultCow, "cow")
-
-    private def enumUnmarshaller[A <: EnumEntry, E <: Enum[A]](
-        enum: E,
-        typeName: String): FromStringUnmarshaller[A] =
-      Unmarshaller.strict { string =>
-        enum
-          .withNameInsensitiveOption(string)
-          .getOrElse(throw new IllegalArgumentException(
-            s"$string is not a valid $typeName"))
-      }
+      MarshallingUtils.enumFromStringUnmarshaller(DefaultCow, "cow")
   }
 }
