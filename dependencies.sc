@@ -30,6 +30,7 @@ object logging {
   val slf4jApi = ivy"org.slf4j:slf4j-api:1.7.25"
   // logging to System.err
   val slf4jSimple = ivy"org.slf4j:slf4j-simple:1.7.25"
+  val log4s = ivy"org.log4s::log4s:1.7.0"
 }
 
 /** Enumerations. */
@@ -44,3 +45,8 @@ object apacheCommons {
 
 /** Tests. */
 val scalatest = ivy"org.scalatest::scalatest::3.0.5"
+
+object database {
+  val postgresql = ivy"org.postgresql:postgresql:42.2.5"
+  val hikaricp = ivy"com.zaxxer:HikariCP:3.3.1"
+}

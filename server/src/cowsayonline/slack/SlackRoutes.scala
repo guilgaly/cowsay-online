@@ -1,20 +1,16 @@
 package cowsayonline.slack
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.post
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import cowsay4s.core.CowAction
 import cowsayonline.JsonSupport
 import cowsayonline.slack.model.SlashCommand
 
-trait SlackRoutes extends JsonSupport {
+final class SlackRoutes extends JsonSupport {
 
-  implicit protected def system: ActorSystem
-
-  lazy val slackRoutes: Route =
+  val routes: Route =
     pathPrefix("slack") {
       concat(
         path("talk") {

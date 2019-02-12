@@ -24,9 +24,12 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     dependencies.scalatags,
     dependencies.logging.slf4jApi,
     dependencies.logging.slf4jSimple,
+    dependencies.logging.log4s,
     dependencies.enumeratum.core,
     dependencies.enumeratum.playJson,
     dependencies.apacheCommons.text,
+    dependencies.database.postgresql,
+    dependencies.database.hikaricp,
   )
 
   this.compile

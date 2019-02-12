@@ -1,6 +1,5 @@
 package cowsayonline.site
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -11,11 +10,9 @@ import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
 import cowsayonline.site.views.Home
 
-trait SiteRoutes {
+final class SiteRoutes {
 
-  implicit protected def system: ActorSystem
-
-  lazy val siteRoutes: Route =
+  val routes: Route =
     encodeResponse {
       concat(
         getStaticAssets,

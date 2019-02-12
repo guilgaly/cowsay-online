@@ -1,6 +1,5 @@
 package cowsayonline.api
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -9,11 +8,9 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsayonline.JsonSupport
 import cowsayonline.api.model.{About, TalkCommand}
 
-trait ApiRoutes extends JsonSupport {
+final class ApiRoutes extends JsonSupport {
 
-  implicit protected def system: ActorSystem
-
-  lazy val apiRoutes: Route =
+  val routes: Route =
     pathPrefix("api") {
       concat(
         path("about") {
