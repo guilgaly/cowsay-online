@@ -77,8 +77,7 @@ final class Database(settings: ServerSettings, ec: ExecutionContext) {
           |  team_id VARCHAR(20) PRIMARY KEY,
           |  created_on TIMESTAMP WITH TIME ZONE NOT NULL,
           |  updated_on TIMESTAMP WITH TIME ZONE NOT NULL,
-          |  access_token VARCHAR(100) NOT NULL,
-          |  bot_access_token VARCHAR(100)
+          |  access_token VARCHAR(100) NOT NULL
           |)""".stripMargin
       val stmt = connection.prepareStatement(sql)
       stmt.executeUpdate()

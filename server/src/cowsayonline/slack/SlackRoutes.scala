@@ -5,10 +5,14 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.post
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import cowsayonline.JsonSupport
 import cowsayonline.slack.model.SlashCommand
+import cowsayonline.slack.persistence.TeamRegistrationDao
+import cowsayonline.{JsonSupport, ServerSettings}
 
-final class SlackRoutes extends JsonSupport {
+final class SlackRoutes(
+    settings: ServerSettings,
+    teamRegistrationDao: TeamRegistrationDao)
+    extends JsonSupport {
 
   val routes: Route =
     pathPrefix("slack") {
