@@ -28,6 +28,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     dependencies.enumeratum.core,
     dependencies.enumeratum.playJson,
     dependencies.apacheCommons.text,
+    dependencies.apacheCommons.codec,
     dependencies.database.postgresql,
     dependencies.database.hikaricp,
   )

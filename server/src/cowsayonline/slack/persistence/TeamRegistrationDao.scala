@@ -14,30 +14,38 @@ final class TeamRegistrationDao(database: Database) {
   private val table = "slack_team_registrations"
 
   private val teamIdCol = "team_id"
+  private val teamNameCol = "team_name"
   private val createdOnCol = "created_on"
   private val updatedOnCol = "updated_on"
   private val accessTokenCol = "access_token"
+  private val scopeCol = "scope"
 
   def insertOrUpdate(teamRegistration: TeamRegistrationLike): Future[Unit] =
     database.withTransactionAsync { connection =>
       val sql =
         s"""INSERT INTO $table (
            |  $teamIdCol,
+           |  $teamNameCol,
            |  $createdOnCol,
            |  $updatedOnCol,
-           |  $accessTokenCol
+           |  $accessTokenCol,
+           |  $scopeCol
            |)
-           |VALUES (?, ?, ?, ?, ?)
+           |VALUES (?, ?, ?, ?, ?, ?)
            |ON CONFLICT ($teamIdCol) DO UPDATE SET
+           |  $teamNameCol = EXCLUDED.$teamNameCol,
            |  $updatedOnCol = EXCLUDED.$updatedOnCol,
-           |  $accessTokenCol = EXCLUDED.$accessTokenCol""".stripMargin
+           |  $accessTokenCol = EXCLUDED.$accessTokenCol,
+           |  $scopeCol = EXCLUDED.$scopeCol""".stripMargin
       val stmt = connection.prepareStatement(sql)
 
       stmt.setString(1, teamRegistration.teamId)
+      stmt.setString(2, teamRegistration.teamName)
       val now = new Timestamp(Instant.now().toEpochMilli)
-      stmt.setTimestamp(2, now, tzUTC)
       stmt.setTimestamp(3, now, tzUTC)
-      stmt.setString(4, teamRegistration.accessToken)
+      stmt.setTimestamp(4, now, tzUTC)
+      stmt.setString(5, teamRegistration.accessToken)
+      stmt.setString(6, teamRegistration.scope)
 
       stmt.executeUpdate()
       stmt.close()
@@ -45,14 +53,7 @@ final class TeamRegistrationDao(database: Database) {
 
   def get(teamId: String): Future[Option[TeamRegistration]] =
     database.withConnectionAsync { connection =>
-      val sql =
-        s"""SELECT
-           |  $teamIdCol,
-           |  $createdOnCol,
-           |  $updatedOnCol,
-           |  $accessTokenCol
-           |FROM $table
-           |WHERE $teamIdCol = ?""".stripMargin
+      val sql = selectSql + s"\nWHERE $teamIdCol = ?"
       val stmt = connection.prepareStatement(sql)
       stmt.setString(1, teamId)
 
@@ -65,14 +66,7 @@ final class TeamRegistrationDao(database: Database) {
 
   def list(): Future[Seq[TeamRegistration]] =
     database.withConnectionAsync { connection =>
-      val sql =
-        s"""SELECT
-           |  $teamIdCol,
-           |  $createdOnCol,
-           |  $updatedOnCol,
-           |  $accessTokenCol
-           |FROM $table""".stripMargin
-      val stmt = connection.prepareStatement(sql)
+      val stmt = connection.prepareStatement(selectSql)
 
       val rs = stmt.executeQuery()
       var res = List.empty[TeamRegistration]
@@ -84,11 +78,23 @@ final class TeamRegistrationDao(database: Database) {
       res.reverse
     }
 
+  private val selectSql =
+    s"""SELECT
+       |  $teamIdCol,
+       |  $teamNameCol,
+       |  $createdOnCol,
+       |  $updatedOnCol,
+       |  $accessTokenCol,
+       |  $scopeCol
+       |FROM $table""".stripMargin
+
   private def mapRow(rs: ResultSet): TeamRegistration = {
-    val teamId = rs.getString(1)
-    val createdOn = rs.getTimestamp(2, tzUTC).toInstant
-    val updatedOn = rs.getTimestamp(3, tzUTC).toInstant
-    val accessToken = rs.getString(4)
-    TeamRegistration(teamId, createdOn, updatedOn, accessToken)
+    val teamId = rs.getString(teamIdCol)
+    val teamName = rs.getString(teamNameCol)
+    val createdOn = rs.getTimestamp(createdOnCol, tzUTC).toInstant
+    val updatedOn = rs.getTimestamp(updatedOnCol, tzUTC).toInstant
+    val accessToken = rs.getString(accessTokenCol)
+    val scope = rs.getString(scopeCol)
+    TeamRegistration(teamId, teamName, createdOn, updatedOn, accessToken, scope)
   }
 }

@@ -74,10 +74,12 @@ final class Database(settings: ServerSettings, ec: ExecutionContext) {
       log.info("Creating database table 'slack_team_registrations'...")
       val sql =
         """CREATE TABLE slack_team_registrations (
-          |  team_id VARCHAR(20) PRIMARY KEY,
+          |  team_id TEXT PRIMARY KEY,
+          |  team_name TEXT NOT NULL,
           |  created_on TIMESTAMP WITH TIME ZONE NOT NULL,
           |  updated_on TIMESTAMP WITH TIME ZONE NOT NULL,
-          |  access_token VARCHAR(100) NOT NULL
+          |  access_token TEXT NOT NULL,
+          |  scope TEXT NOT NULL
           |)""".stripMargin
       val stmt = connection.prepareStatement(sql)
       stmt.executeUpdate()

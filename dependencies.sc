@@ -41,6 +41,7 @@ object enumeratum {
 
 object apacheCommons {
   val text = ivy"org.apache.commons:commons-text:1.6"
+  val codec = ivy"commons-codec:commons-codec:1.11"
 }
 
 /** Tests. */
