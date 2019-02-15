@@ -6,8 +6,8 @@ import com.typesafe.config.Config
 
 final class ServerSettings(val config: Config) {
 
-  val secret: Array[Byte] =
-    config.getString("secret").getBytes(StandardCharsets.UTF_8)
+  val secret: String =
+    config.getString("secret")
 
   val baseUrl: String = config.getString("baseUrl")
 

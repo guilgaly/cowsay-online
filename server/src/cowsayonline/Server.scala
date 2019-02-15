@@ -1,6 +1,6 @@
 package cowsayonline
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 import scala.util.{Failure, Success}
 
@@ -48,9 +48,8 @@ object Server {
     }
 
   def main(args: Array[String]): Unit = {
-    val interface = config.getString("http.interface")
-    val port = config.getInt("http.port")
-
+    val interface = settings.http.interface
+    val port = settings.http.port
     Http().bindAndHandle(routes, interface, port).onComplete {
       case Success(binding) =>
         log.info(s"HTTP server bound to ${binding.localAddress}")
