@@ -1,26 +1,22 @@
 package cowsayonline.slack
 
 import cowsay4s.core._
-import cowsayonline.slack.model.CommandResponse.ResponseType.{
+import cowsayonline.slack.model.TalkResponse.ResponseType.{
   ephemeral,
   in_channel
 }
-import cowsayonline.slack.model.{CommandResponse, SlashCommand}
+import cowsayonline.slack.model.{SlashCommand, TalkCommand, TalkResponse}
 import org.apache.commons.text.StringTokenizer
 import org.apache.commons.text.matcher.StringMatcherFactory
 
-object TalkingSlack {
+object SlackCowsay {
 
-  def talk(
-      slashCommand: SlashCommand,
-      userId: String,
-      text: String): CommandResponse = {
-
-    text.trim.toLowerCase match {
+  def talk(command: TalkCommand): TalkResponse = {
+    command.text.trim.toLowerCase match {
       case "help"  => help
       case "cows"  => availableCows
       case "modes" => availableModes
-      case _       => doTalk(slashCommand, userId, text)
+      case _       => doTalk(command.slashCommand, command.userId, command.text)
     }
   }
 
@@ -98,7 +94,7 @@ object TalkingSlack {
   }
 
   private def helpResponse(msg: String) =
-    CommandResponse(ephemeral, msg)
+    TalkResponse(ephemeral, msg)
 
   private def cowResponse(
       slashCommand: SlashCommand,
@@ -114,7 +110,7 @@ object TalkingSlack {
 
     val escapedCowsay = slackEscape(cowsay)
     val responseText = s"<@$userId>```\n$escapedCowsay```"
-    CommandResponse(in_channel, responseText)
+    TalkResponse(in_channel, responseText)
   }
 
   private def slackEscape(str: String) =

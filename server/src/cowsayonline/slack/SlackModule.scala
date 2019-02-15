@@ -13,9 +13,10 @@ final class SlackModule(settings: ServerSettings, database: Database)(
     system: ActorSystem,
     materializer: ActorMaterializer) {
 
-  private lazy val slackRoutes =
-    new SlackRoutes(settings, teamRegistrationDao, slackpiClient)
-  def routes: Route = slackRoutes.routes
+  lazy val routes: Route = new SlackRoutes(
+    new SlackCowsayRoutes(settings),
+    new SlackOauthRoutes(settings, teamRegistrationDao, slackpiClient)
+  )()
 
   lazy val teamRegistrationDao: TeamRegistrationDao =
     new TeamRegistrationDao(database)

@@ -8,9 +8,9 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsayonline.JsonSupport
 import cowsayonline.api.model.{About, TalkCommand}
 
-final class ApiRoutes extends JsonSupport {
+object ApiRoutes extends JsonSupport {
 
-  val routes: Route =
+  def apply(): Route =
     pathPrefix("api") {
       concat(
         path("about") {
@@ -21,7 +21,7 @@ final class ApiRoutes extends JsonSupport {
         path("talk") {
           post {
             entity(as[TalkCommand]) { talkCommand =>
-              val talkResponse = TalkingApi.talk(talkCommand)
+              val talkResponse = ApiCowsay.talk(talkCommand)
               complete((StatusCodes.OK, talkResponse))
             }
           }

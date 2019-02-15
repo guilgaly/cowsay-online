@@ -1,0 +1,52 @@
+package cowsayonline.slack
+
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
+import cowsayonline.slack.model.TalkCommand
+import cowsayonline.util.SignatureUtils
+import cowsayonline.{JsonSupport, ServerSettings}
+import org.apache.commons.codec.binary.Hex
+
+class SlackCowsayRoutes(settings: ServerSettings) extends JsonSupport {
+
+  def apply(): Route = (path("talk") & post) {
+    (validateSignature & ignoreSslChecks) {
+      formFields(TalkCommand.fields).as(TalkCommand.apply) { command =>
+        val response = SlackCowsay.talk(command)
+        complete((StatusCodes.OK, response))
+      }
+    }
+  }
+
+  private def validateSignature = {
+    def extractValues = {
+      implicit val strUnmarshaller: FromEntityUnmarshaller[String] =
+        Unmarshaller.stringUnmarshaller
+
+      headerValueByName("X-Slack-Request-Timestamp") &
+        headerValueByName("X-Slack-Signature") &
+        entity(as[String])
+    }
+
+    extractValues.trequire {
+      case (timestamp, expectedSignature, body) =>
+        val stringToSign = s"v0:$timestamp:$body"
+        SignatureUtils
+          .signHmacSHA256(stringToSign, settings.slack.signingSecret)
+          .map { signature =>
+            s"v0=${Hex.encodeHexString(signature)}" == expectedSignature
+          }
+          .getOrElse(false)
+    }
+  }
+
+  private def ignoreSslChecks =
+    formField("ssl_check".as[Int].?)
+      .require(!_.contains(1))
+      .recover { _ =>
+        complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "OK"))
+          .toDirective[Unit]
+      }
+}

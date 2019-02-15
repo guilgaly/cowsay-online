@@ -3,7 +3,7 @@ package cowsayonline.site
 import cowsay4s.core._
 import cowsayonline.site.model.TalkCommand
 
-object TalkingSite {
+object SiteCowsay {
 
   def talk(talkCommand: TalkCommand): String = {
     val cowCommand = CowCommand(

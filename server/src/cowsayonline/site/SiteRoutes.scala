@@ -10,9 +10,9 @@ import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
 import cowsayonline.site.views.Home
 
-final class SiteRoutes {
+object SiteRoutes {
 
-  val routes: Route =
+  def apply(): Route =
     concat(
       getStaticAssets,
       pathSingleSlash {
@@ -38,7 +38,7 @@ final class SiteRoutes {
         "mode".as[CowMode].?)) { (message, cowAction, defaultCow, cowMode) =>
       val talkCommand =
         TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
-      val cow = TalkingSite.talk(talkCommand)
+      val cow = SiteCowsay.talk(talkCommand)
       val home = Home.renderWithCow(cow, talkCommand).render
       completeHtml(home)
     }

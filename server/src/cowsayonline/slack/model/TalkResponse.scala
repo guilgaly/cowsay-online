@@ -2,17 +2,17 @@ package cowsayonline.slack.model
 
 import scala.collection.immutable
 
-import cowsayonline.slack.model.CommandResponse.ResponseType
+import cowsayonline.slack.model.TalkResponse.ResponseType
 import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import play.api.libs.json.{Json, OFormat}
 
-case class CommandResponse(
+case class TalkResponse(
     response_type: ResponseType,
     text: String
 )
 
-object CommandResponse {
-  implicit val format: OFormat[CommandResponse] = Json.format
+object TalkResponse {
+  implicit val format: OFormat[TalkResponse] = Json.format
 
   sealed trait ResponseType extends EnumEntry
   object ResponseType
