@@ -1,6 +1,8 @@
 package cowsayonline.site
+import akka.http.scaladsl.server.Route
 
 final class SiteModule {
 
-  lazy val siteRoutes: SiteRoutes = new SiteRoutes
+  private lazy val siteRoutes = new SiteRoutes
+  def routes: Route = siteRoutes.routes
 }

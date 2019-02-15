@@ -7,10 +7,7 @@ import scala.util.{Failure, Success}
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives.{
-  concat,
-  redirectToNoTrailingSlashIfPresent
-}
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
@@ -39,11 +36,11 @@ object Server {
   private val slackModule = new SlackModule(settings, database)
 
   private lazy val routes: Route =
-    redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
+    (encodeResponse & redirectToNoTrailingSlashIfPresent(StatusCodes.Found)) {
       concat(
-        siteModule.siteRoutes.routes,
-        apiModule.apiRoutes.routes,
-        slackModule.slackRoutes.routes
+        siteModule.routes,
+        apiModule.routes,
+        slackModule.routes
       )
     }
 

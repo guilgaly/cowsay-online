@@ -1,6 +1,8 @@
 package cowsayonline.api
+import akka.http.scaladsl.server.Route
 
 final class ApiModule {
 
-  lazy val apiRoutes: ApiRoutes = new ApiRoutes
+  private lazy val apiRoutes = new ApiRoutes
+  def routes: Route = apiRoutes.routes
 }

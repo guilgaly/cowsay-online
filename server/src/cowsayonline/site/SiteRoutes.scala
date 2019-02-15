@@ -13,14 +13,12 @@ import cowsayonline.site.views.Home
 final class SiteRoutes {
 
   val routes: Route =
-    encodeResponse {
-      concat(
-        getStaticAssets,
-        pathSingleSlash {
-          concat(getHome, postHome)
-        }
-      )
-    }
+    concat(
+      getStaticAssets,
+      pathSingleSlash {
+        concat(getHome, postHome)
+      }
+    )
 
   private def getStaticAssets = pathPrefix("static") {
     getFromResourceDirectory("cowsayonline/site/static")

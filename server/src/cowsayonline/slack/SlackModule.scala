@@ -1,6 +1,7 @@
 package cowsayonline.slack
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import cowsayonline.ServerSettings
 import cowsayonline.common.db.Database
@@ -12,8 +13,9 @@ final class SlackModule(settings: ServerSettings, database: Database)(
     system: ActorSystem,
     materializer: ActorMaterializer) {
 
-  lazy val slackRoutes: SlackRoutes =
+  private lazy val slackRoutes =
     new SlackRoutes(settings, teamRegistrationDao, slackpiClient)
+  def routes: Route = slackRoutes.routes
 
   lazy val teamRegistrationDao: TeamRegistrationDao =
     new TeamRegistrationDao(database)
