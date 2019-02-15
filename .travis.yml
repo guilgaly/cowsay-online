@@ -5,17 +5,10 @@ before_install:
 language: scala
 jdk: openjdk11
 
-stages:
-- name: test
-- name: publish
-  if: branch = master
+cache:
+  directories:
+  - $HOME/.coursier
 
-jobs:
-  include:
-  - stage: test
-    name: Build
-    script: ./.ci_scripts/build.sh
-  - stage: deploy
-    name: Deploy
-    before_script: heroku plugins:install java
-    script: ./.ci_scripts/deploy.sh
+script:
+- ./.ci_scripts/build.sh
+- ./.ci_scripts/deploy.sh
