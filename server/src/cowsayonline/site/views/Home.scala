@@ -7,27 +7,40 @@ import enumeratum.EnumEntry
 import scalatags.Text.all._
 import scalatags.Text.tags2
 
-object Home {
+object Home extends Page {
+
+  val renderWithoutCow: Frag =
+    render(None, TalkCommand.default)
+
+  def renderWithCow(cow: String, talkCommand: TalkCommand): Frag =
+    render(Some(cow), talkCommand)
+
+  private def render(cow: Option[String], talkCommand: TalkCommand) =
+    renderPage(None)(
+      cow.map(displayCowSection),
+      cowFormSection(talkCommand),
+    )
 
   private def displayCowSection(cow: String) =
     tags2.section(
       pre(cls := "cow-display")(cow)
     )
 
-  private def cowFormField(id: String, labelText: String)(content: Frag) =
-    div(cls := "form-field")(label(attr("for") := id)(labelText), content)
-
-  private def enumOptions[A <: EnumEntry, E <: EnumWithDefault[A]](
-      enum: E,
-      selectedValue: A): Frag = {
-    val orderedNonDefaults = enum.nonDefaultValues.sortBy(_.entryName)
-    val orderedValues = enum.defaultValue +: orderedNonDefaults
-    orderedValues.map { entry =>
-      option(
-        value := entry.entryName,
-        if (entry == selectedValue) selected := "true" else "",
-      )(entry.entryName)
-    }
+  private def cowFormSection(talkCommand: TalkCommand) = {
+    tags2.section(
+      form(id := "cowform", action := "", method := "post")(
+        cowFormActionField(talkCommand.action),
+        cowFormMessageField(talkCommand.message),
+        cowFormCowField(talkCommand.defaultCow),
+        cowFormModeField(talkCommand.mode),
+        div(cls := "form-submit-field")(
+          input(
+            tpe := "submit",
+            value := "Make the cow talk",
+            cls := "form-button")
+        )
+      )
+    )
   }
 
   private def cowFormActionField(selected: CowAction) =
@@ -67,42 +80,19 @@ object Home {
       select(id := "cowform-select-mode", name := "mode")(
         enumOptions(CowMode, selected)))
 
-  private def cowFormSection(talkCommand: TalkCommand) = {
-    tags2.section(
-      form(id := "cowform", action := "", method := "post")(
-        cowFormActionField(talkCommand.action),
-        cowFormMessageField(talkCommand.message),
-        cowFormCowField(talkCommand.defaultCow),
-        cowFormModeField(talkCommand.mode),
-        div(cls := "form-submit-field")(
-          input(
-            tpe := "submit",
-            value := "Make the cow talk",
-            cls := "form-button")
-        )
-      )
-    )
+  private def cowFormField(id: String, labelText: String)(content: Frag) =
+    div(cls := "form-field")(label(attr("for") := id)(labelText), content)
+
+  private def enumOptions[A <: EnumEntry, E <: EnumWithDefault[A]](
+      enum: E,
+      selectedValue: A): Frag = {
+    val orderedNonDefaults = enum.nonDefaultValues.sortBy(_.entryName)
+    val orderedValues = enum.defaultValue +: orderedNonDefaults
+    orderedValues.map { entry =>
+      option(
+        value := entry.entryName,
+        if (entry == selectedValue) selected := "true" else "",
+      )(entry.entryName)
+    }
   }
-
-  private def pageBody(cow: Option[String], talkCommand: TalkCommand) =
-    body(
-      Header.render,
-      MainBody.render(
-        cow.map(displayCowSection),
-        cowFormSection(talkCommand),
-      ),
-      Footer.render,
-    )
-
-  private def render(cow: Option[String], talkCommand: TalkCommand) =
-    html(lang := "en")(
-      Head.render("Cowsay Online"),
-      pageBody(cow, talkCommand),
-    )
-
-  val renderWithoutCow: Frag =
-    render(None, TalkCommand.default)
-
-  def renderWithCow(cow: String, talkCommand: TalkCommand): Frag =
-    render(Some(cow), talkCommand)
 }

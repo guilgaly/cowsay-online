@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core._
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
-import cowsayonline.site.views.Home
+import cowsayonline.site.views.{About, Cowsay4slack, Home}
+import scalatags.Text.all.Frag
 
 object SiteRoutes {
 
@@ -17,7 +18,9 @@ object SiteRoutes {
       getStaticAssets,
       pathSingleSlash {
         concat(getHome, postHome)
-      }
+      },
+      getAbout,
+      getCowsay4slack,
     )
 
   private def getStaticAssets = pathPrefix("static") {
@@ -25,8 +28,7 @@ object SiteRoutes {
   }
 
   private def getHome = get {
-    val home = Home.renderWithoutCow.render
-    completeHtml(home)
+    completeHtml(Home.renderWithoutCow)
   }
 
   private def postHome = post {
@@ -39,11 +41,19 @@ object SiteRoutes {
       val talkCommand =
         TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
       val cow = SiteCowsay.talk(talkCommand)
-      val home = Home.renderWithCow(cow, talkCommand).render
-      completeHtml(home)
+
+      completeHtml(Home.renderWithCow(cow, talkCommand))
     }
   }
 
-  private def completeHtml(html: String) =
-    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, html))
+  private def getAbout = (path("about") & get) {
+    completeHtml(About.render)
+  }
+
+  private def getCowsay4slack = (path("cowsay4slack") & get) {
+    completeHtml(Cowsay4slack.render)
+  }
+
+  private def completeHtml(html: Frag) =
+    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, html.render))
 }

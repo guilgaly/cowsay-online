@@ -7,12 +7,12 @@ object Header {
 
   val render: Frag =
     header(
-      h1("Cowsay Online"),
+      h1(a(href := "/")("Cowsay Online")),
       tags2.nav(
         ul(
-          li("link 1"),
-          li("link 2"),
-          li("link 3"),
+          li(a(href := "/")("Home")),
+          li(a(href := "/about")("About")),
+          li(a(href := "/cowsay4slack")("Slack integration")),
         )
       )
     )

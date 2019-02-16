@@ -1,13 +1,10 @@
 package cowsayonline
 
-import java.nio.charset.StandardCharsets
-
 import com.typesafe.config.Config
 
 final class ServerSettings(val config: Config) {
 
-  val secret: String =
-    config.getString("secret")
+  val secret: String = config.getString("secret")
 
   val baseUrl: String = config.getString("baseUrl")
 
