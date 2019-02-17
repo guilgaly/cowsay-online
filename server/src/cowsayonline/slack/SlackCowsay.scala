@@ -27,7 +27,16 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
   }
 
   private val help =
-    helpResponse("Help message (TODO).")
+    helpResponse(
+      """Cowsay4slack powered by Cowsay Online - https://cowsay-online.herokuapp.com
+        |
+        |Usage:
+        | - `/cowsay Cows ♥︎ Slack!`: Simple cowsay with the message "Cows ♥︎ Slack!"
+        | - `/cowthink Cows ♥︎ Slack!`: Replace `/cowsay` with `/cowthink`, and the cow will think its message instead of saying it.
+        | - `/cowsay cow=moose mode=stoned Moose ♥︎ Slack too!`: Cowsay with optional parameters
+        | - `/cowsay cows`: list all available cows
+        | - `/cowsay modes`: list all available modes
+        | - `/cowsay help`: prints this help message""".stripMargin)
 
   private val availableCows = {
     val default = DefaultCow.defaultValue.cowName.toLowerCase
