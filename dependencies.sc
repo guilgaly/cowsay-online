@@ -51,3 +51,5 @@ object database {
   val postgresql = ivy"org.postgresql:postgresql:42.2.5"
   val hikaricp = ivy"com.zaxxer:HikariCP:3.3.1"
 }
+
+val fastparse = ivy"com.lihaoyi::fastparse:2.1.0"

@@ -4,7 +4,7 @@ import scalatags.Text.all._
 
 trait Page {
 
-  protected final def renderPage(pageTitle: Option[String])(
+  final protected def renderPage(pageTitle: Option[String])(
       mainBodyContent: Modifier*): Frag =
     html(lang := "en")(
       Head.render((Seq("Cowsay Online") ++ pageTitle).mkString(" | ")),

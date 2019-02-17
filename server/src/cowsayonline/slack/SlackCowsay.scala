@@ -5,7 +5,13 @@ import cowsayonline.slack.model.TalkResponse.ResponseType.{
   ephemeral,
   in_channel
 }
-import cowsayonline.slack.model.{SlashCommand, TalkCommand, TalkResponse}
+import cowsayonline.slack.model.{
+  SlashCommand,
+  TalkCommand,
+  TalkCommandText,
+  TalkResponse
+}
+import fastparse.Parsed
 import org.apache.commons.text.StringTokenizer
 import org.apache.commons.text.matcher.StringMatcherFactory
 
@@ -24,9 +30,9 @@ object SlackCowsay {
     helpResponse("Help message (TODO).")
 
   private val availableCows = {
-    val default = DefaultCow.defaultValue.entryName.toLowerCase
+    val default = DefaultCow.defaultValue.cowName.toLowerCase
     val nonDefaults =
-      DefaultCow.nonDefaultValues.map(_.entryName.toLowerCase).sorted
+      DefaultCow.nonDefaultValues.map(_.cowName.toLowerCase).sorted
     val allCows = (default +: nonDefaults).map(s => s"`$s`").mkString(", ")
     helpResponse(s"Available cows: $allCows")
   }
@@ -43,18 +49,13 @@ object SlackCowsay {
       slashCommand: SlashCommand,
       userId: String,
       text: String) = {
-    val tokens = tokenize(text)
 
-    (findCow(tokens), findMode(tokens)) match {
-      case (Right(cow), Right(mode)) =>
-        val message = tokens.lastOption.getOrElse("")
-        cowResponse(slashCommand, userId, cow, mode, message)
-      case (Left(err1), Left(err2)) =>
-        helpResponse(err1 + "\n" + err2)
-      case (Left(err), _) =>
-        helpResponse(err)
-      case (_, Left(err)) =>
-        helpResponse(err)
+    TalkCommandText.Parser(text) match {
+      case Parsed.Success(cmd, _) =>
+        cowResponse(slashCommand, userId, cmd.cow, cmd.mode, cmd.message)
+      case Parsed.Failure(_, _, _) =>
+        helpResponse(
+          s"Not a valid command text; try `${slashCommand.command} help` for help.")
     }
   }
 

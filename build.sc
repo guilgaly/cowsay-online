@@ -31,6 +31,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     dependencies.apacheCommons.codec,
     dependencies.database.postgresql,
     dependencies.database.hikaricp,
+    dependencies.fastparse,
   )
 
   this.compile
