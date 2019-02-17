@@ -6,15 +6,17 @@ import akka.stream.ActorMaterializer
 import cowsayonline.ServerSettings
 import cowsayonline.common.db.Database
 import cowsayonline.slack.persistence.TeamRegistrationDao
-import cowsayonline.slack.slackapi.SlackApiClient
+
+import scala.concurrent.ExecutionContext
 
 final class SlackModule(settings: ServerSettings, database: Database)(
     implicit
     system: ActorSystem,
     materializer: ActorMaterializer) {
+  implicit private val ec: ExecutionContext = system.dispatcher
 
   lazy val routes: Route = new SlackRoutes(
-    new SlackCowsayRoutes(settings),
+    new SlackCowsayRoutes(settings, slackpiClient, slackCowsay),
     new SlackOauthRoutes(settings, teamRegistrationDao, slackpiClient)
   )()
 
@@ -22,4 +24,6 @@ final class SlackModule(settings: ServerSettings, database: Database)(
     new TeamRegistrationDao(database)
 
   lazy val slackpiClient: SlackApiClient = new SlackApiClient(settings)
+
+  lazy val slackCowsay: SlackCowsay = new SlackCowsay
 }

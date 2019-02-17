@@ -1,4 +1,4 @@
-package cowsayonline.slack.slackapi
+package cowsayonline.slack.model
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

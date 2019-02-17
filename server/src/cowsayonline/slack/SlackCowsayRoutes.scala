@@ -9,13 +9,22 @@ import cowsayonline.util.SignatureUtils
 import cowsayonline.{JsonSupport, ServerSettings}
 import org.apache.commons.codec.binary.Hex
 
-class SlackCowsayRoutes(settings: ServerSettings) extends JsonSupport {
+import scala.concurrent.ExecutionContext
+
+class SlackCowsayRoutes(
+    settings: ServerSettings,
+    slackApiClient: SlackApiClient,
+    slackCowsay: SlackCowsay)(implicit ec: ExecutionContext)
+    extends JsonSupport {
 
   def apply(): Route = (path("talk") & post) {
     (validateSignature & ignoreSslChecks) {
       formFields(TalkCommand.fields).as(TalkCommand.apply) { command =>
-        val response = SlackCowsay.talk(command)
-        complete((StatusCodes.OK, response))
+        slackCowsay.talk(command).flatMap { response =>
+          slackApiClient.respondToSlashCommand(command.responseUrl, response)
+        }
+        val ackResponse = s"`${command.slashCommand.command} ${command.text}`"
+        complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, ackResponse))
       }
     }
   }

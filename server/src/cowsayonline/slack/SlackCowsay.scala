@@ -12,12 +12,12 @@ import cowsayonline.slack.model.{
   TalkResponse
 }
 import fastparse.Parsed
-import org.apache.commons.text.StringTokenizer
-import org.apache.commons.text.matcher.StringMatcherFactory
 
-object SlackCowsay {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def talk(command: TalkCommand): TalkResponse = {
+final class SlackCowsay(implicit ec: ExecutionContext) {
+
+  def talk(command: TalkCommand): Future[TalkResponse] = Future {
     command.text.trim.toLowerCase match {
       case "help"  => help
       case "cows"  => availableCows
@@ -57,41 +57,6 @@ object SlackCowsay {
         helpResponse(
           s"Not a valid command text; try `${slashCommand.command} help` for help.")
     }
-  }
-
-  private def findCow(tokens: Seq[String]) =
-    tokens.find(_.startsWith("cow=")) match {
-      case Some(str) =>
-        val rawCow = str.drop(4)
-        DefaultCow
-          .withNameInsensitiveOption(rawCow)
-          .toRight(
-            s"`$rawCow` is not a valid cow; check out all valid modes with `/cowsay cows`")
-      case None =>
-        Right(DefaultCow.defaultValue)
-    }
-
-  private def findMode(tokens: Seq[String]) =
-    tokens.find(_.startsWith("mode=")) match {
-      case Some(str) =>
-        val rawMode = str.drop(5)
-        CowMode
-          .withNameInsensitiveOption(rawMode)
-          .toRight(
-            s"`$rawMode` is not a valid mode; check out all valid modes with `/cowsay modes`")
-      case None =>
-        Right(CowMode.defaultValue)
-    }
-
-  private def tokenize(str: String) = {
-    val fact = StringMatcherFactory.INSTANCE
-    val tokenizer =
-      new StringTokenizer(str, fact.splitMatcher, fact.doubleQuoteMatcher)
-    var tokens = List.empty[String]
-    while (tokenizer.hasNext) {
-      tokens = tokenizer.next() :: tokens
-    }
-    tokens.reverse
   }
 
   private def helpResponse(msg: String) =
