@@ -1,11 +1,8 @@
 package cowsayonline
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext}
-import scala.util.{Failure, Success}
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -16,6 +13,9 @@ import cowsayonline.common.db.Database
 import cowsayonline.site.SiteModule
 import cowsayonline.slack.SlackModule
 import org.log4s._
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext}
 
 object Server {
   private[this] val log = getLogger
@@ -47,14 +47,13 @@ object Server {
   def main(args: Array[String]): Unit = {
     val interface = settings.http.interface
     val port = settings.http.port
-    Http().bindAndHandle(routes, interface, port).onComplete {
-      case Success(binding) =>
-        log.info(s"HTTP server bound to ${binding.localAddress}")
-      case Failure(err) =>
-        log.error(err)("Failed to bind HTTP server")
-    }
+
+    val binding: ServerBinding =
+      Await.result(Http().bindAndHandle(routes, interface, port), 30.seconds)
+    log.info(s"HTTP server bound to ${binding.localAddress}")
 
     Await.result(system.whenTerminated, Duration.Inf)
+    Await.result(binding.terminate(15.seconds), 20.seconds)
     ()
   }
 }
