@@ -2,13 +2,13 @@ import mill.scalalib._
 
 /** 'nuff said. */
 object cowsay4s {
-  val core = ivy"fr.ggaly::cowsay4s-core:0.1.2-SNAPSHOT"
+  val core = ivy"fr.ggaly::cowsay4s-core:0.1.2"
 }
 
 /** Web server (akka-http). */
 object akka {
   private val akkaHttpVersion = "10.1.7"
-  private val akkaVersion = "2.5.20"
+  private val akkaVersion = "2.5.21"
 
   val stream = ivy"com.typesafe.akka::akka-stream:${akkaVersion}"
   val http = ivy"com.typesafe.akka::akka-http:${akkaHttpVersion}"
@@ -41,7 +41,7 @@ object enumeratum {
 
 object apacheCommons {
   val text = ivy"org.apache.commons:commons-text:1.6"
-  val codec = ivy"commons-codec:commons-codec:1.11"
+  val codec = ivy"commons-codec:commons-codec:1.12"
 }
 
 /** Tests. */
