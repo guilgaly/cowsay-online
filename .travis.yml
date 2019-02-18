@@ -10,5 +10,7 @@ cache:
   - $HOME/.coursier
 
 script:
+- set -e
 - ./.ci_scripts/build.sh
 - ./.ci_scripts/deploy.sh
+- set +e

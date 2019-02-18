@@ -11,7 +11,6 @@ import cowsayonline.slack.model.{
   TalkCommandText,
   TalkResponse
 }
-import fastparse.Parsed
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,13 +57,23 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
       slashCommand: SlashCommand,
       userId: String,
       text: String) = {
+    import TalkCommandText.ParsingError._
 
     TalkCommandText.Parser(text) match {
-      case Parsed.Success(cmd, _) =>
+      case Right(cmd) =>
         cowResponse(slashCommand, userId, cmd.cow, cmd.mode, cmd.message)
-      case Parsed.Failure(_, _, _) =>
-        helpResponse(
-          s"Not a valid command text; try `${slashCommand.command} help` for help.")
+      case Left(errors) =>
+        val errMsg = errors
+          .map {
+            case InvalidCommandText =>
+              s"Not a valid command text; try `${slashCommand.command} help` for help."
+            case InvalidCow(cow) =>
+              s"$cow is not a valid cow name; try `${slashCommand.command} cows` to list valid values."
+            case InvalidMode(mode) =>
+              s"$mode is not a valid mode; try `${slashCommand.command} modes` to list valid values."
+          }
+          .mkString("\n")
+        helpResponse(errMsg)
     }
   }
 
