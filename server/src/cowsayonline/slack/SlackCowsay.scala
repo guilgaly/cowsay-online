@@ -1,6 +1,7 @@
 package cowsayonline.slack
 
 import cowsay4s.core._
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.slack.model.TalkResponse.ResponseType.{
   ephemeral,
   in_channel
@@ -46,9 +47,9 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
   }
 
   private val availableModes = {
-    val default = CowMode.defaultValue.entryName.toLowerCase
+    val default = DefaultCowMode.defaultValue.entryName.toLowerCase
     val nonDefaults =
-      CowMode.nonDefaultValues.map(_.entryName.toLowerCase).sorted
+      DefaultCowMode.nonDefaultValues.map(_.entryName.toLowerCase).sorted
     val allModes = (default +: nonDefaults).map(s => s"`$s`").mkString(", ")
     helpResponse(s"Available modes: $allModes")
   }
@@ -84,13 +85,13 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
       slashCommand: SlashCommand,
       userId: String,
       cow: DefaultCow,
-      mode: CowMode,
+      mode: DefaultCowMode,
       message: String) = {
     val action = slashCommand.cowAction
-    val wrap = StrictPositiveInt(40)
-    val command = CowCommand(action, cow, mode, wrap, message)
+    val wrap = MessageWrapping(40)
+    val command = CowCommand(action, cow, message, mode, wrap)
 
-    val cowsay = CowSay.withCustomCommand(command)
+    val cowsay = CowSay.talk(command)
 
     val escapedCowsay = slackEscape(cowsay)
     val responseText = s"<@$userId>```\n$escapedCowsay```"

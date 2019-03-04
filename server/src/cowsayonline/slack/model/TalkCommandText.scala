@@ -1,21 +1,24 @@
 package cowsayonline.slack.model
 
-import cowsay4s.core.{CowMode, DefaultCow}
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import enumeratum.{Enum, EnumEntry}
 
 import scala.collection.immutable
 
-case class TalkCommandText(cow: DefaultCow, mode: CowMode, message: String)
+case class TalkCommandText(
+    cow: DefaultCow,
+    mode: DefaultCowMode,
+    message: String)
 
 object TalkCommandText {
 
   def withDefaults(
       cow: Option[DefaultCow],
-      mode: Option[CowMode],
+      mode: Option[DefaultCowMode],
       message: String): TalkCommandText =
     new TalkCommandText(
       cow.getOrElse(DefaultCow.defaultValue),
-      mode.getOrElse(CowMode.defaultValue),
+      mode.getOrElse(DefaultCowMode.defaultValue),
       message)
 
   object Parser {
@@ -39,11 +42,11 @@ object TalkCommandText {
           }
           val maybeMode = maybeModeStr match {
             case Some(modeStr) =>
-              CowMode
+              DefaultCowMode
                 .withNameInsensitiveOption(modeStr)
                 .toRight(InvalidMode(modeStr))
             case None =>
-              Right(CowMode.defaultValue)
+              Right(DefaultCowMode.defaultValue)
           }
           (maybeCow, maybeMode) match {
             case (Left(err1), Left(err2)) =>

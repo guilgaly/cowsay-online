@@ -9,10 +9,10 @@ object SiteCowsay {
     val cowCommand = CowCommand(
       talkCommand.action,
       talkCommand.defaultCow,
-      talkCommand.mode,
-      StrictPositiveInt(40),
       talkCommand.message,
+      talkCommand.mode,
+      MessageWrapping(40),
     )
-    CowSay.withCustomCommand(cowCommand)
+    CowSay.talk(cowCommand)
   }
 }

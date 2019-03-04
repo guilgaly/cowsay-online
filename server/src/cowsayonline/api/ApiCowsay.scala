@@ -7,7 +7,7 @@ object ApiCowsay {
 
   def talk(talkCommand: TalkCommand): TalkResponse = {
     val cowCommand = talkCommand.toCowCommand
-    val theCowSaid = CowSay.withCustomCommand(cowCommand)
+    val theCowSaid = CowSay.talk(cowCommand)
     TalkResponse(theCowSaid)
   }
 }

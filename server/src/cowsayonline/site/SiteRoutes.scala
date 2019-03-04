@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core._
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
 import cowsayonline.site.views.{About, Cowsay4slack, Home}
@@ -37,12 +38,13 @@ object SiteRoutes {
         "message",
         "action".as[CowAction].?,
         "default-cow".as[DefaultCow].?,
-        "mode".as[CowMode].?)) { (message, cowAction, defaultCow, cowMode) =>
-      val talkCommand =
-        TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
-      val cow = SiteCowsay.talk(talkCommand)
+        "mode".as[DefaultCowMode].?)) {
+      (message, cowAction, defaultCow, cowMode) =>
+        val talkCommand =
+          TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
+        val cow = SiteCowsay.talk(talkCommand)
 
-      completeHtml(Home.renderWithCow(cow, talkCommand))
+        completeHtml(Home.renderWithCow(cow, talkCommand))
     }
   }
 
