@@ -9,7 +9,7 @@ import mill.scalalib.scalafmt.ScalafmtModule
 
 object server extends ScalaModule with ScalafmtModule with BuildInfo {
 
-  def publishVersion = "0.1.0"
+  def publishVersion = "0.1.1-SNAPSHOT"
 
   override def scalaVersion = settings.scalaVersion
   override def scalacOptions = settings.scalacOptions
@@ -17,6 +17,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
   override def repositories = super.repositories ++ settings.customRepositories
   override def ivyDeps = Agg(
     dependencies.cowsay4s.core,
+    dependencies.cowsay4s.defaults,
     dependencies.akka.stream,
     dependencies.akka.http,
     dependencies.akka.httpPlayJson,
