@@ -9,7 +9,7 @@ import cowsay4s.core._
 import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
-import cowsayonline.site.views.{About, Cowsay4slack, Home}
+import cowsayonline.site.views.{About, Cowsay4slack, Home, ListCows}
 import scalatags.Text.all.Frag
 
 object SiteRoutes {
@@ -22,6 +22,7 @@ object SiteRoutes {
       },
       getAbout,
       getCowsay4slack,
+      getListCows,
     )
 
   private def getStaticAssets = pathPrefix("static") {
@@ -54,6 +55,10 @@ object SiteRoutes {
 
   private def getCowsay4slack = (path("cowsay4slack") & get) {
     completeHtml(Cowsay4slack.render)
+  }
+
+  private def getListCows = (path("listCows") & get) {
+    completeHtml(ListCows.render)
   }
 
   private def completeHtml(html: Frag) =

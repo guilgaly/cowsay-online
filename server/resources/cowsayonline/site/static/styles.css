@@ -121,12 +121,21 @@ footer {
     font-weight: bold;
     margin-bottom: 1em;
 }
+.main-body h3 {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
 .main-body p {
     margin-bottom: 0.5em;
 }
 .main-body li {
     list-style-type: disc;
     list-style-position: inside;
+}
+
+.multiline-display {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .cow-display {
