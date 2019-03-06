@@ -30,9 +30,9 @@ object TalkCommandText {
       : Either[List[TalkCommandText.ParsingError], TalkCommandText] =
       parse(text.trim, parser(_)) match {
         case Parsed.Success((maybeCowStr, maybeModeStr, message), _) =>
-          println(s"maybeCowStr: $maybeCowStr")
-          println(s"maybeModeStr: $maybeModeStr")
           val maybeCow = maybeCowStr match {
+            case Some("random") =>
+              Right(DefaultCow.randomValue)
             case Some(cowStr) =>
               DefaultCow
                 .withCowNameInsensitive(cowStr)
@@ -41,6 +41,8 @@ object TalkCommandText {
               Right(DefaultCow.defaultValue)
           }
           val maybeMode = maybeModeStr match {
+            case Some("random") =>
+              Right(DefaultCowMode.randomValue)
             case Some(modeStr) =>
               DefaultCowMode
                 .withNameInsensitiveOption(modeStr)

@@ -2,6 +2,7 @@ package cowsayonline.slack
 
 import cowsay4s.core._
 import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
+import cowsayonline.ServerSettings
 import cowsayonline.slack.model.TalkResponse.ResponseType.{
   ephemeral,
   in_channel
@@ -15,7 +16,8 @@ import cowsayonline.slack.model.{
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class SlackCowsay(implicit ec: ExecutionContext) {
+final class SlackCowsay(settings: ServerSettings)(
+    implicit ec: ExecutionContext) {
 
   def talk(command: TalkCommand): Future[TalkResponse] = Future {
     command.text.trim.toLowerCase match {
@@ -26,18 +28,20 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
     }
   }
 
-  private val help =
-    helpResponse(
-      """Cowsay4slack powered by Cowsay Online ( https://cowsay-online.herokuapp.com )
-        |View all supported cows on this page: https://cowsay-online.herokuapp.com/listCows
-        |
-        |Usage:
-        | - `/cowsay Cows ♥︎ Slack!`: Simple cowsay with the message "Cows ♥︎ Slack!"
-        | - `/cowthink Cows ♥︎ Slack!`: Replace `/cowsay` with `/cowthink`, and the cow will think its message instead of saying it.
-        | - `/cowsay cow=moose mode=stoned Moose ♥︎ Slack too!`: Cowsay with optional parameters
-        | - `/cowsay cows`: list all available cows
-        | - `/cowsay modes`: list all available modes
-        | - `/cowsay help`: prints this help message""".stripMargin)
+  private val help = {
+    val baseUrl = settings.baseUrl
+    helpResponse(s"""Cowsay4slack powered by Cowsay Online ( $baseUrl )
+         |View all supported cows on this page: $baseUrl/listCows
+         |
+         |Usage:
+         | - `/cowsay Cows ♥︎ Slack!`: Simple cowsay with the message "Cows ♥︎ Slack!"
+         | - `/cowthink Cows ♥︎ Slack!`: Replace `/cowsay` with `/cowthink`, and the cow will think its message instead of saying it.
+         | - `/cowsay cow=moose mode=stoned Moose ♥︎ Slack too!`: Cowsay with optional parameters
+         | - `/cowsay cow=random mode=random Moose ♥︎ Slack too!`: You can use random values for the optional parameters
+         | - `/cowsay cows`: list all available cows
+         | - `/cowsay modes`: list all available modes
+         | - `/cowsay help`: prints this help message""".stripMargin)
+  }
 
   private val availableCows = {
     val default = DefaultCow.defaultValue.cowName.toLowerCase
