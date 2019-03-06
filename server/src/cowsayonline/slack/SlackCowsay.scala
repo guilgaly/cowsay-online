@@ -32,6 +32,7 @@ final class SlackCowsay(settings: ServerSettings)(
     val baseUrl = settings.baseUrl
     helpResponse(s"""Cowsay4slack powered by Cowsay Online ( $baseUrl )
          |View all supported cows on this page: $baseUrl/listCows
+         |Install cowsay4slack for another Slack team from this page: $baseUrl/cowsay4slack
          |
          |Usage:
          | - `/cowsay Cows ♥︎ Slack!`: Simple cowsay with the message "Cows ♥︎ Slack!"

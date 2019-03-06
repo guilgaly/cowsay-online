@@ -22,5 +22,6 @@ final class ServerSettings(val config: Config) {
     val clientId: String = config.getString("slack.clientId")
     val clientSecret: String = config.getString("slack.clientSecret")
     val signingSecret: String = config.getString("slack.signingSecret")
+    val appInstallUrl: String = config.getString("slack.appInstallUrl")
   }
 }
