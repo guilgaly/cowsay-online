@@ -28,7 +28,8 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
 
   private val help =
     helpResponse(
-      """Cowsay4slack powered by Cowsay Online - https://cowsay-online.herokuapp.com
+      """Cowsay4slack powered by Cowsay Online ( https://cowsay-online.herokuapp.com )
+        |View all supported cows on this page: https://cowsay-online.herokuapp.com/listCows
         |
         |Usage:
         | - `/cowsay Cows ♥︎ Slack!`: Simple cowsay with the message "Cows ♥︎ Slack!"
@@ -93,8 +94,11 @@ final class SlackCowsay(implicit ec: ExecutionContext) {
 
     val cowsay = CowSay.talk(command)
 
+    val firstLine =
+      s"<@$userId> /${slashCommand.command} cow=${cow.cowName} mode=${mode.modeName}"
     val escapedCowsay = slackEscape(cowsay)
-    val responseText = s"<@$userId>```\n$escapedCowsay```"
+    val responseText = s"$firstLine```\n$escapedCowsay```"
+
     TalkResponse(in_channel, responseText)
   }
 
