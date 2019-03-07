@@ -8,7 +8,7 @@ import cowsayonline.util.MarshallingUtils
 case class TalkCommand(
     message: String,
     action: CowAction,
-    defaultCow: DefaultCow,
+    cow: DefaultCow,
     mode: DefaultCowMode)
 
 object TalkCommand {

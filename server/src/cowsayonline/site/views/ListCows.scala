@@ -1,6 +1,6 @@
 package cowsayonline.site.views
 
-import cowsay4s.core.{CowAction, CowCommand, CowSay}
+import cowsay4s.core.{CowCommand, CowSay}
 import cowsay4s.defaults.DefaultCow
 import cowsayonline.site.views.common.Page
 import scalatags.Text.all._
@@ -18,7 +18,7 @@ object ListCows extends Page {
 
   private def showcaseCow(cow: DefaultCow) = {
     val cowPic =
-      CowSay.talk(CowCommand(CowAction.defaultValue, cow, cow.cowName))
+      CowSay.talk(CowCommand(cow, cow.cowName))
 
     tags2.section(
       h3(cow.cowName),

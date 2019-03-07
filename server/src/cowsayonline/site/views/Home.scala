@@ -32,7 +32,7 @@ object Home extends Page {
       form(id := "cowform", action := "", method := "post")(
         cowFormActionField(talkCommand.action),
         cowFormMessageField(talkCommand.message),
-        cowFormCowField(talkCommand.defaultCow),
+        cowFormCowField(talkCommand.cow),
         cowFormModeField(talkCommand.mode),
         div(cls := "form-submit-field")(
           input(

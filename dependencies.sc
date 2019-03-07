@@ -2,7 +2,7 @@ import mill.scalalib._
 
 /** 'nuff said. */
 object cowsay4s {
-  private val version = "0.2.0"
+  private val version = "0.2.1"
   val core = ivy"fr.ggaly::cowsay4s-core:${version}"
   val defaults = ivy"fr.ggaly::cowsay4s-defaults:${version}"
 }

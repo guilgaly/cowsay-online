@@ -7,10 +7,10 @@ import play.api.libs.json.{Json, OFormat}
 case class TalkCommand(message: String) {
 
   def toCowCommand: CowCommand = CowCommand(
-    CowAction.CowSay,
     DefaultCow.Default,
     message,
     DefaultCowMode.Default,
+    CowAction.CowSay,
     MessageWrapping(40)
   )
 }

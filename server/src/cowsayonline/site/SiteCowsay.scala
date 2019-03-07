@@ -7,10 +7,10 @@ object SiteCowsay {
 
   def talk(talkCommand: TalkCommand): String = {
     val cowCommand = CowCommand(
-      talkCommand.action,
-      talkCommand.defaultCow,
+      talkCommand.cow,
       talkCommand.message,
       talkCommand.mode,
+      talkCommand.action,
       MessageWrapping(40),
     )
     CowSay.talk(cowCommand)

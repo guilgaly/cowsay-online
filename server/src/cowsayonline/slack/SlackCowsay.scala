@@ -95,7 +95,7 @@ final class SlackCowsay(settings: ServerSettings)(
       message: String) = {
     val action = slashCommand.cowAction
     val wrap = MessageWrapping(40)
-    val command = CowCommand(action, cow, message, mode, wrap)
+    val command = CowCommand(cow, message, mode, action, wrap)
 
     val cowsay = CowSay.talk(command)
 
