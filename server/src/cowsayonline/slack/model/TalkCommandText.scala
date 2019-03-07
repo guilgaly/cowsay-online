@@ -1,21 +1,24 @@
 package cowsayonline.slack.model
 
-import cowsay4s.core.{CowMode, DefaultCow}
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import enumeratum.{Enum, EnumEntry}
 
 import scala.collection.immutable
 
-case class TalkCommandText(cow: DefaultCow, mode: CowMode, message: String)
+case class TalkCommandText(
+    cow: DefaultCow,
+    mode: DefaultCowMode,
+    message: String)
 
 object TalkCommandText {
 
   def withDefaults(
       cow: Option[DefaultCow],
-      mode: Option[CowMode],
+      mode: Option[DefaultCowMode],
       message: String): TalkCommandText =
     new TalkCommandText(
       cow.getOrElse(DefaultCow.defaultValue),
-      mode.getOrElse(CowMode.defaultValue),
+      mode.getOrElse(DefaultCowMode.defaultValue),
       message)
 
   object Parser {
@@ -27,9 +30,9 @@ object TalkCommandText {
       : Either[List[TalkCommandText.ParsingError], TalkCommandText] =
       parse(text.trim, parser(_)) match {
         case Parsed.Success((maybeCowStr, maybeModeStr, message), _) =>
-          println(s"maybeCowStr: $maybeCowStr")
-          println(s"maybeModeStr: $maybeModeStr")
           val maybeCow = maybeCowStr match {
+            case Some("random") =>
+              Right(DefaultCow.randomValue)
             case Some(cowStr) =>
               DefaultCow
                 .withCowNameInsensitive(cowStr)
@@ -38,12 +41,14 @@ object TalkCommandText {
               Right(DefaultCow.defaultValue)
           }
           val maybeMode = maybeModeStr match {
+            case Some("random") =>
+              Right(DefaultCowMode.randomValue)
             case Some(modeStr) =>
-              CowMode
+              DefaultCowMode
                 .withNameInsensitiveOption(modeStr)
                 .toRight(InvalidMode(modeStr))
             case None =>
-              Right(CowMode.defaultValue)
+              Right(DefaultCowMode.defaultValue)
           }
           (maybeCow, maybeMode) match {
             case (Left(err1), Left(err2)) =>

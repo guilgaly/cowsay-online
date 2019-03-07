@@ -1,14 +1,15 @@
 package cowsayonline.site.model
 
 import akka.http.scaladsl.unmarshalling.FromStringUnmarshaller
-import cowsay4s.core.{CowAction, CowMode, DefaultCow}
+import cowsay4s.core.CowAction
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.util.MarshallingUtils
 
 case class TalkCommand(
     message: String,
     action: CowAction,
-    defaultCow: DefaultCow,
-    mode: CowMode)
+    cow: DefaultCow,
+    mode: DefaultCowMode)
 
 object TalkCommand {
 
@@ -16,12 +17,12 @@ object TalkCommand {
       message: String,
       action: Option[CowAction],
       defaultCow: Option[DefaultCow],
-      mode: Option[CowMode]): TalkCommand =
+      mode: Option[DefaultCowMode]): TalkCommand =
     TalkCommand(
       message,
       action.getOrElse(CowAction.defaultValue),
       defaultCow.getOrElse(DefaultCow.defaultValue),
-      mode.getOrElse(CowMode.defaultValue)
+      mode.getOrElse(DefaultCowMode.defaultValue)
     )
 
   val default: TalkCommand = withDefaults("", None, None, None)
@@ -31,8 +32,8 @@ object TalkCommand {
     implicit val cowActionUnmarshaller: FromStringUnmarshaller[CowAction] =
       MarshallingUtils.enumFromStringUnmarshaller(CowAction, "action")
 
-    implicit val cowModeUnmarshaller: FromStringUnmarshaller[CowMode] =
-      MarshallingUtils.enumFromStringUnmarshaller(CowMode, "mode")
+    implicit val cowModeUnmarshaller: FromStringUnmarshaller[DefaultCowMode] =
+      MarshallingUtils.enumFromStringUnmarshaller(DefaultCowMode, "mode")
 
     implicit val defaultCowUnmarshaller: FromStringUnmarshaller[DefaultCow] =
       MarshallingUtils.enumFromStringUnmarshaller(DefaultCow, "cow")

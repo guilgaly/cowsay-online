@@ -1,6 +1,7 @@
 package cowsayonline.site.views
 
-import cowsay4s.core._
+import cowsay4s.core.{CowAction, EnumWithDefault}
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.views.common._
 import enumeratum.EnumEntry
@@ -31,7 +32,7 @@ object Home extends Page {
       form(id := "cowform", action := "", method := "post")(
         cowFormActionField(talkCommand.action),
         cowFormMessageField(talkCommand.message),
-        cowFormCowField(talkCommand.defaultCow),
+        cowFormCowField(talkCommand.cow),
         cowFormModeField(talkCommand.mode),
         div(cls := "form-submit-field")(
           input(
@@ -75,10 +76,10 @@ object Home extends Page {
       select(id := "cowform-select-default-cow", name := "default-cow")(
         enumOptions(DefaultCow, selected)))
 
-  private def cowFormModeField(selected: CowMode) =
+  private def cowFormModeField(selected: DefaultCowMode) =
     cowFormField("cowform-select-mode", "Mode:")(
       select(id := "cowform-select-mode", name := "mode")(
-        enumOptions(CowMode, selected)))
+        enumOptions(DefaultCowMode, selected)))
 
   private def cowFormField(id: String, labelText: String)(content: Frag) =
     div(cls := "form-field")(label(attr("for") := id)(labelText), content)

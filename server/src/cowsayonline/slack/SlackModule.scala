@@ -25,5 +25,5 @@ final class SlackModule(settings: ServerSettings, database: Database)(
 
   lazy val slackpiClient: SlackApiClient = new SlackApiClient(settings)
 
-  lazy val slackCowsay: SlackCowsay = new SlackCowsay
+  lazy val slackCowsay: SlackCowsay = new SlackCowsay(settings)
 }

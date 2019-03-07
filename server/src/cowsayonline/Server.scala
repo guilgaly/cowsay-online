@@ -31,7 +31,7 @@ object Server {
   private val databaseEc = system.dispatchers.lookup("db-context")
   private val database = new Database(settings, databaseEc)
 
-  private val siteModule = new SiteModule
+  private val siteModule = new SiteModule(settings)
   private val apiModule = new ApiModule
   private val slackModule = new SlackModule(settings, database)
 

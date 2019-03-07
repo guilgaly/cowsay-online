@@ -1,6 +1,6 @@
 package cowsayonline.slack.model
 
-import cowsay4s.core.{CowMode, DefaultCow}
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.tests.UnitSpec
 
 class TalkCommandTextParserSpec extends UnitSpec {
@@ -25,7 +25,7 @@ class TalkCommandTextParserSpec extends UnitSpec {
           "cow=elephant-in-snake\nmode=borg  \t Hello World!\n\tWhat a lovely test. ♥︎  "
         val expected = TalkCommandText(
           DefaultCow.ElephantInSnake,
-          CowMode.Borg,
+          DefaultCowMode.Borg,
           "Hello World!\n\tWhat a lovely test. ♥︎")
         TalkCommandText.Parser(text) shouldBe Right(expected)
       }

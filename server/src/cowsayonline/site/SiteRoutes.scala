@@ -6,12 +6,14 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core._
+import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
+import cowsayonline.ServerSettings
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
-import cowsayonline.site.views.{About, Cowsay4slack, Home}
+import cowsayonline.site.views.{About, Cowsay4slack, Home, ListCows}
 import scalatags.Text.all.Frag
 
-object SiteRoutes {
+final class SiteRoutes(settings: ServerSettings) {
 
   def apply(): Route =
     concat(
@@ -21,6 +23,7 @@ object SiteRoutes {
       },
       getAbout,
       getCowsay4slack,
+      getListCows,
     )
 
   private def getStaticAssets = pathPrefix("static") {
@@ -37,12 +40,13 @@ object SiteRoutes {
         "message",
         "action".as[CowAction].?,
         "default-cow".as[DefaultCow].?,
-        "mode".as[CowMode].?)) { (message, cowAction, defaultCow, cowMode) =>
-      val talkCommand =
-        TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
-      val cow = SiteCowsay.talk(talkCommand)
+        "mode".as[DefaultCowMode].?)) {
+      (message, cowAction, defaultCow, cowMode) =>
+        val talkCommand =
+          TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
+        val cow = SiteCowsay.talk(talkCommand)
 
-      completeHtml(Home.renderWithCow(cow, talkCommand))
+        completeHtml(Home.renderWithCow(cow, talkCommand))
     }
   }
 
@@ -51,7 +55,11 @@ object SiteRoutes {
   }
 
   private def getCowsay4slack = (path("cowsay4slack") & get) {
-    completeHtml(Cowsay4slack.render)
+    completeHtml(Cowsay4slack.render(settings))
+  }
+
+  private def getListCows = (path("listCows") & get) {
+    completeHtml(ListCows.render)
   }
 
   private def completeHtml(html: Frag) =
