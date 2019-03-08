@@ -100,9 +100,9 @@ final class SlackCowsay(settings: ServerSettings)(
     val cowsay = CowSay.talk(command)
 
     val firstLine =
-      s"<@$userId> /${slashCommand.command} cow=${cow.cowName} mode=${mode.modeName}"
+      s"<@$userId> `/${slashCommand.command} cow=${cow.cowName} mode=${mode.modeName}`"
     val escapedCowsay = slackEscape(cowsay)
-    val responseText = s"$firstLine```\n$escapedCowsay```"
+    val responseText = s"$firstLine\n```$escapedCowsay```"
 
     TalkResponse(in_channel, responseText)
   }

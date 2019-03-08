@@ -9,7 +9,7 @@ import mill.scalalib.scalafmt.ScalafmtModule
 
 object server extends ScalaModule with ScalafmtModule with BuildInfo {
 
-  def publishVersion = "0.1.1"
+  def publishVersion = "0.1.2-SNAPSHOT"
 
   override def scalaVersion = settings.scalaVersion
   override def scalacOptions = settings.scalacOptions
