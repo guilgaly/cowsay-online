@@ -11,5 +11,5 @@ EOF
 false
 )
 
-echo "[INFO] Running tests"
-mill server.test
+echo "[INFO] Running tests and packaging executable JAR"
+mill all "server.{test,assembly}"
