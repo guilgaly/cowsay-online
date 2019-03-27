@@ -35,8 +35,7 @@ object database {
 /** Logging. */
 object logging {
   val slf4jApi = ivy"org.slf4j:slf4j-api:1.7.26"
-  // logging to System.err
-  val slf4jSimple = ivy"org.slf4j:slf4j-simple:1.7.26"
+  val logback = ivy"ch.qos.logback:logback-classic:1.2.3"
   val log4s = ivy"org.log4s::log4s:1.7.0"
 }
 
