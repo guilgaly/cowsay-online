@@ -9,7 +9,7 @@ object cowsay4s {
 
 /** Web server (akka-http). */
 object akka {
-  private val akkaHttpVersion = "10.1.7"
+  private val akkaHttpVersion = "10.1.8"
   private val akkaVersion = "2.5.21"
 
   val stream = ivy"com.typesafe.akka::akka-stream:${akkaVersion}"
@@ -34,9 +34,9 @@ object database {
 
 /** Logging. */
 object logging {
-  val slf4jApi = ivy"org.slf4j:slf4j-api:1.7.25"
+  val slf4jApi = ivy"org.slf4j:slf4j-api:1.7.26"
   // logging to System.err
-  val slf4jSimple = ivy"org.slf4j:slf4j-simple:1.7.25"
+  val slf4jSimple = ivy"org.slf4j:slf4j-simple:1.7.26"
   val log4s = ivy"org.log4s::log4s:1.7.0"
 }
 
@@ -58,4 +58,4 @@ object apacheCommons {
   val macWire = ivy"com.softwaremill.macwire::macros:2.3.2"
 
 /** Tests. */
-  val scalatest = ivy"org.scalatest::scalatest::3.0.5"
+  val scalatest = ivy"org.scalatest::scalatest::3.0.7"
