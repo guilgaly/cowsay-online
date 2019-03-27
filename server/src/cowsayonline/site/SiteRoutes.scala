@@ -7,13 +7,14 @@ import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core._
 import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
-import cowsayonline.ServerSettings
 import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
 import cowsayonline.site.views.{About, Cowsay4slack, Home, ListCows}
+import cowsayonline.{RouteProvider, ServerSettings}
 import scalatags.Text.all.Frag
 
-final class SiteRoutes(settings: ServerSettings) {
+final class SiteRoutes(settings: ServerSettings, siteCowsay: SiteCowsay)
+    extends RouteProvider {
 
   def apply(): Route =
     concat(
@@ -44,7 +45,7 @@ final class SiteRoutes(settings: ServerSettings) {
       (message, cowAction, defaultCow, cowMode) =>
         val talkCommand =
           TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
-        val cow = SiteCowsay.talk(talkCommand)
+        val cow = siteCowsay.talk(talkCommand)
 
         completeHtml(Home.renderWithCow(cow, talkCommand))
     }

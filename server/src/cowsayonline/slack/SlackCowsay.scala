@@ -16,7 +16,7 @@ import cowsayonline.slack.model.{
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class SlackCowsay(settings: ServerSettings)(
+final class SlackCowsay(settings: ServerSettings, cowSay: CowSay)(
     implicit ec: ExecutionContext) {
 
   def talk(command: TalkCommand): Future[TalkResponse] = Future {
@@ -97,11 +97,11 @@ final class SlackCowsay(settings: ServerSettings)(
     val wrap = MessageWrapping(40)
     val command = CowCommand(cow, message, mode, action, wrap)
 
-    val cowsay = CowSay.talk(command)
+    val cowsayRes = cowSay.talk(command)
 
     val firstLine =
       s"<@$userId> `${slashCommand.command} cow=${cow.cowName} mode=${mode.modeName}`"
-    val escapedCowsay = slackEscape(cowsay)
+    val escapedCowsay = slackEscape(cowsayRes)
     val responseText = s"$firstLine\n```$escapedCowsay```"
 
     TalkResponse(in_channel, responseText)

@@ -1,29 +1,32 @@
 package cowsayonline.slack
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
-import cowsayonline.ServerSettings
+import com.softwaremill.macwire._
+import cowsay4s.core.CowSay
 import cowsayonline.common.db.Database
 import cowsayonline.slack.persistence.TeamRegistrationDao
+import cowsayonline.{RouteProvider, ServerSettings}
 
 import scala.concurrent.ExecutionContext
 
-final class SlackModule(settings: ServerSettings, database: Database)(
-    implicit
-    system: ActorSystem,
-    materializer: ActorMaterializer) {
-  implicit private val ec: ExecutionContext = system.dispatcher
+trait SlackModule {
+  def settings: ServerSettings
+  def database: Database
+  def cowSay: CowSay
 
-  lazy val routes: Route = new SlackRoutes(
+  implicit def system: ActorSystem
+  implicit def materializer: ActorMaterializer
+  implicit def ec: ExecutionContext
+
+  lazy val slackRoutes: RouteProvider = new SlackRoutes(
     new SlackCowsayRoutes(settings, slackpiClient, slackCowsay),
     new SlackOauthRoutes(settings, teamRegistrationDao, slackpiClient)
-  )()
+  )
 
-  lazy val teamRegistrationDao: TeamRegistrationDao =
-    new TeamRegistrationDao(database)
+  lazy val teamRegistrationDao: TeamRegistrationDao = wire[TeamRegistrationDao]
 
-  lazy val slackpiClient: SlackApiClient = new SlackApiClient(settings)
+  lazy val slackpiClient: SlackApiClient = wire[SlackApiClient]
 
-  lazy val slackCowsay: SlackCowsay = new SlackCowsay(settings)
+  lazy val slackCowsay: SlackCowsay = wire[SlackCowsay]
 }

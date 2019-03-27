@@ -1,9 +1,13 @@
 package cowsayonline.site
 
-import akka.http.scaladsl.server.Route
-import cowsayonline.ServerSettings
+import com.softwaremill.macwire._
+import cowsay4s.core.CowSay
+import cowsayonline.{RouteProvider, ServerSettings}
 
-final class SiteModule(settings: ServerSettings) {
+trait SiteModule {
+  def settings: ServerSettings
+  def cowSay: CowSay
 
-  lazy val routes: Route = new SiteRoutes(settings)()
+  lazy val siteCowsay: SiteCowsay = wire[SiteCowsay]
+  lazy val siteRoutes: RouteProvider = wire[SiteRoutes]
 }

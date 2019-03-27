@@ -3,7 +3,7 @@ package cowsayonline.site
 import cowsay4s.core._
 import cowsayonline.site.model.TalkCommand
 
-object SiteCowsay {
+final class SiteCowsay(cowSay: CowSay) {
 
   def talk(talkCommand: TalkCommand): String = {
     val cowCommand = CowCommand(
@@ -13,6 +13,6 @@ object SiteCowsay {
       talkCommand.action,
       MessageWrapping(40),
     )
-    CowSay.talk(cowCommand)
+    cowSay.talk(cowCommand)
   }
 }

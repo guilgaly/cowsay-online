@@ -16,13 +16,15 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
 
   override def repositories = super.repositories ++ settings.customRepositories
   override def ivyDeps = Agg(
-    dependencies.cowsay4s.core,
     dependencies.cowsay4s.defaults,
+    dependencies.cowsay4s.asciimojis,
     dependencies.akka.stream,
     dependencies.akka.http,
     dependencies.akka.httpPlayJson,
     dependencies.akka.slf4j,
     dependencies.scalatags,
+    dependencies.database.postgresql,
+    dependencies.database.hikaricp,
     dependencies.logging.slf4jApi,
     dependencies.logging.slf4jSimple,
     dependencies.logging.log4s,
@@ -30,9 +32,8 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     dependencies.enumeratum.playJson,
     dependencies.apacheCommons.text,
     dependencies.apacheCommons.codec,
-    dependencies.database.postgresql,
-    dependencies.database.hikaricp,
     dependencies.fastparse,
+    dependencies.macWire,
   )
 
   this.compile
@@ -41,7 +42,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     Map(
       "name" -> "cowsay-online",
       "version" -> publishVersion,
-      "scalaVersion" -> scalaVersion()
+      "scalaVersion" -> scalaVersion(),
     )
   }
   override def buildInfoPackageName = Some("cowsayonline")
