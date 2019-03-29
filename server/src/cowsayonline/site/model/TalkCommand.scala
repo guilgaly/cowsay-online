@@ -9,7 +9,8 @@ case class TalkCommand(
     message: String,
     action: CowAction,
     cow: DefaultCow,
-    mode: DefaultCowMode)
+    mode: DefaultCowMode,
+)
 
 object TalkCommand {
 
@@ -22,7 +23,7 @@ object TalkCommand {
       message,
       action.getOrElse(CowAction.defaultValue),
       defaultCow.getOrElse(DefaultCow.defaultValue),
-      mode.getOrElse(DefaultCowMode.defaultValue)
+      mode.getOrElse(DefaultCowMode.defaultValue),
     )
 
   val default: TalkCommand = withDefaults("", None, None, None)
