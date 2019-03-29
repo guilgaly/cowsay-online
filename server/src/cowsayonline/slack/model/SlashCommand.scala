@@ -9,8 +9,8 @@ import enumeratum.{Enum, EnumEntry}
 
 sealed abstract class SlashCommand(
     val command: String,
-    val cowAction: CowAction)
-    extends EnumEntry {
+    val cowAction: CowAction,
+) extends EnumEntry {
   override def entryName: String = command
 }
 

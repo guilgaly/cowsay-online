@@ -2,12 +2,22 @@ import $file.dependencies
 import $file.settings
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:0.3.6`
 import mill._
-import mill.api.PathRef
 import mill.contrib.BuildInfo
 import mill.scalalib._
 import mill.scalalib.scalafmt.ScalafmtModule
 
-object server extends ScalaModule with ScalafmtModule with BuildInfo {
+trait FormattedScalaModule extends ScalaModule with ScalafmtModule {
+  // We need to override this (not just 'scalafmtVersion') because the group ID has changed
+  override def scalafmtDeps: T[Agg[PathRef]] = T {
+    Lib.resolveDependencies(
+      zincWorker.repositories,
+      Lib.depToDependency(_, "2.12.8"),
+      Seq(ivy"org.scalameta::scalafmt-cli:2.0.0-RC5"),
+    )
+  }
+}
+
+object server extends FormattedScalaModule with BuildInfo {
 
   def publishVersion = "0.1.2-SNAPSHOT"
 
@@ -57,7 +67,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     Seq(PathRef(dir))
   }
 
-  object test extends Tests with ScalafmtModule {
+  object test extends Tests with FormattedScalaModule {
     override def testFrameworks = Seq("org.scalatest.tools.Framework")
     override def ivyDeps = Agg(
       dependencies.scalatest,

@@ -13,7 +13,7 @@ object ListCows extends Page {
       div(cls := "multiline-display")(
         showcaseCow(DefaultCow.defaultValue),
         DefaultCow.nonDefaultValues.map(showcaseCow),
-      )
+      ),
     )
 
   private def showcaseCow(cow: DefaultCow) = {

@@ -17,8 +17,8 @@ final class SlackApiClient(settings: ServerSettings)(
     implicit
     system: ActorSystem,
     materializer: ActorMaterializer,
-    ec: ExecutionContext)
-    extends JsonSupport {
+    ec: ExecutionContext,
+) extends JsonSupport {
   private[this] val log = getLogger
 
   def oauthAccess(code: String, redirectUri: String): Future[AccessToken] = {
@@ -30,7 +30,8 @@ final class SlackApiClient(settings: ServerSettings)(
           "client_id" -> settings.slack.clientId,
           "client_secret" -> settings.slack.clientSecret,
           "code" -> code,
-          "redirect_uri" -> redirectUri).toEntity
+          "redirect_uri" -> redirectUri,
+        ).toEntity,
       )
     Http().singleRequest(request).flatMap { response =>
       Unmarshal(response).to[AccessToken]
@@ -39,13 +40,15 @@ final class SlackApiClient(settings: ServerSettings)(
 
   def respondToSlashCommand[R: Writes](
       responseUrl: String,
-      response: R): Future[Unit] = {
+      response: R,
+  ): Future[Unit] = {
     val jsonResponse = Json.toBytes(Json.toJson(response))
     val request =
       HttpRequest(
         uri = responseUrl,
         method = HttpMethods.POST,
-        entity = HttpEntity(ContentTypes.`application/json`, jsonResponse))
+        entity = HttpEntity(ContentTypes.`application/json`, jsonResponse),
+      )
 
     def errMsg = "Failed to send slash command response to Slack"
 

@@ -42,19 +42,20 @@ final class SiteRoutes(settings: ServerSettings, siteCowsay: SiteCowsay)
         "action".as[CowAction].?,
         "default-cow".as[DefaultCow].?,
         "mode".as[DefaultCowMode].?,
-        "outputType".as[OutputType].?)) {
-      (message, cowAction, defaultCow, cowMode, outputType) =>
-        val talkCommand =
-          TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
+        "outputType".as[OutputType].?,
+      ),
+    ) { (message, cowAction, defaultCow, cowMode, outputType) =>
+      val talkCommand =
+        TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
 
-        outputType.getOrElse(OutputType.defaultValue) match {
-          case OutputType.Text =>
-            val cow = siteCowsay.talkToText(talkCommand)
-            completeHtml(Home.renderWithTextCow(cow, talkCommand))
-          case OutputType.Png =>
-            val cow = siteCowsay.talkToPng(talkCommand)
-            completeHtml(Home.renderWithPngCow(cow, talkCommand))
-        }
+      outputType.getOrElse(OutputType.defaultValue) match {
+        case OutputType.Text =>
+          val cow = siteCowsay.talkToText(talkCommand)
+          completeHtml(Home.renderWithTextCow(cow, talkCommand))
+        case OutputType.Png =>
+          val cow = siteCowsay.talkToPng(talkCommand)
+          completeHtml(Home.renderWithPngCow(cow, talkCommand))
+      }
 
     }
   }

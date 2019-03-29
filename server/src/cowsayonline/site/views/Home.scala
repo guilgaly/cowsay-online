@@ -21,7 +21,7 @@ object Home extends Page {
   def renderWithTextCow(cow: String, talkCommand: TalkCommand): Frag =
     renderPage(None)(
       tags2.section(
-        pre(cls := "cow-display")(cow)
+        pre(cls := "cow-display")(cow),
       ),
       cowFormSection(talkCommand, OutputType.Text),
     )
@@ -40,7 +40,8 @@ object Home extends Page {
 
   private def cowFormSection(
       talkCommand: TalkCommand,
-      outputType: OutputType = OutputType.defaultValue) = {
+      outputType: OutputType = OutputType.defaultValue,
+  ) = {
     tags2.section(
       form(id := "cowform", action := "", method := "post")(
         cowFormActionField(talkCommand.action),
@@ -52,9 +53,10 @@ object Home extends Page {
           input(
             tpe := "submit",
             value := "Make the cow talk",
-            cls := "form-button")
-        )
-      )
+            cls := "form-button",
+          ),
+        ),
+      ),
     )
   }
 
@@ -73,7 +75,8 @@ object Home extends Page {
           value := "CowThink",
           if (selected == CowAction.CowThink) checked := "true" else (),
         )("Think"),
-      ))
+      ),
+    )
 
   private def cowFormMessageField(message: String) =
     cowFormField("cowform-input-message", "Message:")(
@@ -83,29 +86,38 @@ object Home extends Page {
         autofocus := "autofocus",
         cols := "40",
         rows := "5",
-        maxlength := "2000")(message))
+        maxlength := "2000",
+      )(message),
+    )
 
   private def cowFormCowField(selected: DefaultCow) =
     cowFormField("cowform-select-default-cow", "Cow:")(
       select(id := "cowform-select-default-cow", name := "default-cow")(
-        enumOptions(DefaultCow, selected)))
+        enumOptions(DefaultCow, selected),
+      ),
+    )
 
   private def cowFormModeField(selected: DefaultCowMode) =
     cowFormField("cowform-select-mode", "Mode:")(
       select(id := "cowform-select-mode", name := "mode")(
-        enumOptions(DefaultCowMode, selected)))
+        enumOptions(DefaultCowMode, selected),
+      ),
+    )
 
   private def cowFormOutputTypeField(selected: OutputType) =
     cowFormField("cowform-select-outputType", "Output type:")(
       select(id := "cowform-select-outputType", name := "outputType")(
-        enumOptions(OutputType, selected)))
+        enumOptions(OutputType, selected),
+      ),
+    )
 
   private def cowFormField(id: String, labelText: String)(content: Frag) =
     div(cls := "form-field")(label(attr("for") := id)(labelText), content)
 
   private def enumOptions[A <: EnumEntry, E <: EnumWithDefault[A]](
       enum: E,
-      selectedValue: A): Frag = {
+      selectedValue: A,
+  ): Frag = {
     val orderedNonDefaults = enum.nonDefaultValues.sortBy(_.entryName)
     val orderedValues = enum.defaultValue +: orderedNonDefaults
     orderedValues.map { entry =>

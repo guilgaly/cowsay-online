@@ -18,7 +18,8 @@ object TalkCommand {
       message: String,
       action: Option[CowAction],
       defaultCow: Option[DefaultCow],
-      mode: Option[DefaultCowMode]): TalkCommand =
+      mode: Option[DefaultCowMode],
+  ): TalkCommand =
     TalkCommand(
       message,
       action.getOrElse(CowAction.defaultValue),

@@ -14,7 +14,8 @@ import scala.concurrent.ExecutionContext
 class SlackCowsayRoutes(
     settings: ServerSettings,
     slackApiClient: SlackApiClient,
-    slackCowsay: SlackCowsay)(implicit ec: ExecutionContext)
+    slackCowsay: SlackCowsay,
+)(implicit ec: ExecutionContext)
     extends RouteProvider
     with JsonSupport {
 

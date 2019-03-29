@@ -8,26 +8,30 @@ import scala.collection.immutable
 case class TalkCommandText(
     cow: DefaultCow,
     mode: DefaultCowMode,
-    message: String)
+    message: String,
+)
 
 object TalkCommandText {
 
   def withDefaults(
       cow: Option[DefaultCow],
       mode: Option[DefaultCowMode],
-      message: String): TalkCommandText =
+      message: String,
+  ): TalkCommandText =
     new TalkCommandText(
       cow.getOrElse(DefaultCow.defaultValue),
       mode.getOrElse(DefaultCowMode.defaultValue),
-      message)
+      message,
+    )
 
   object Parser {
     import fastparse._
     import NoWhitespace._
     import ParsingError._
 
-    def apply(text: String)
-      : Either[List[TalkCommandText.ParsingError], TalkCommandText] =
+    def apply(
+        text: String,
+    ): Either[List[TalkCommandText.ParsingError], TalkCommandText] =
       parse(text.trim, parser(_)) match {
         case Parsed.Success((options, message), _) =>
           val maybeCow = options.get(CmdOption.Cow) match {
@@ -68,7 +72,8 @@ object TalkCommandText {
       P(cmdOptions ~ AnyChar.rep.! ~ End)
 
     private def cmdOptions[_: P] = P(
-      (cmdOptionType ~ "=" ~ notWhitespace ~ whitespace.rep(1)).rep.map(_.toMap)
+      (cmdOptionType ~ "=" ~ notWhitespace ~ whitespace.rep(1)).rep
+        .map(_.toMap),
     )
 
     private def cmdOptionType[_: P]: P[CmdOption] = {
