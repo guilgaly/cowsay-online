@@ -12,6 +12,8 @@ It aims to provide, in a single app:
 - a RESTful API providing the same service
 - Slack integration
 
+Cowsay-online is accessible at [cowsay-online.herokuapp.com](https://cowsay-online.herokuapp.com).
+
 Props to Tony Monroe for the original cowsay program.
 
 ```text
