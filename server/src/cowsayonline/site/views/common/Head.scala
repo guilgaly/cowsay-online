@@ -11,7 +11,8 @@ object Head {
     meta(name := "description", content := "Cowsay Online")
   private val linkFont = link(
     rel := "stylesheet",
-    href := "https://fonts.googleapis.com/css?family=VT323")
+    href := "https://fonts.googleapis.com/css?family=VT323",
+  )
   private val linkStylesheet =
     link(rel := "stylesheet", href := "/static/styles.css")
 

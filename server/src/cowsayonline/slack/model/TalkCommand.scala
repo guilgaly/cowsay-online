@@ -8,7 +8,8 @@ case class TalkCommand(
     text: String,
     userId: String,
     teamId: String,
-    responseUrl: String)
+    responseUrl: String,
+)
 
 object TalkCommand {
   val fields: (NameReceptacle[SlashCommand], String, String, String, String) =

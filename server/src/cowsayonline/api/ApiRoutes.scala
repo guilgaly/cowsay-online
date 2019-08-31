@@ -5,10 +5,12 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.{get, post}
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import cowsayonline.JsonSupport
+import cowsayonline.{JsonSupport, RouteProvider}
 import cowsayonline.api.model.{About, TalkCommand}
 
-object ApiRoutes extends JsonSupport {
+final class ApiRoutes(apiCowsay: ApiCowsay)
+    extends RouteProvider
+    with JsonSupport {
 
   def apply(): Route =
     pathPrefix("api") {
@@ -21,11 +23,11 @@ object ApiRoutes extends JsonSupport {
         path("talk") {
           post {
             entity(as[TalkCommand]) { talkCommand =>
-              val talkResponse = ApiCowsay.talk(talkCommand)
+              val talkResponse = apiCowsay.talk(talkCommand)
               complete((StatusCodes.OK, talkResponse))
             }
           }
-        }
+        },
       )
     }
 }

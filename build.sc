@@ -2,7 +2,6 @@ import $file.dependencies
 import $file.settings
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:0.3.6`
 import mill._
-import mill.api.PathRef
 import mill.contrib.BuildInfo
 import mill.scalalib._
 import mill.scalalib.scalafmt.ScalafmtModule
@@ -16,23 +15,24 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
 
   override def repositories = super.repositories ++ settings.customRepositories
   override def ivyDeps = Agg(
-    dependencies.cowsay4s.core,
     dependencies.cowsay4s.defaults,
+    dependencies.cowsay4s.asciimojis,
     dependencies.akka.stream,
     dependencies.akka.http,
     dependencies.akka.httpPlayJson,
     dependencies.akka.slf4j,
     dependencies.scalatags,
+    dependencies.database.postgresql,
+    dependencies.database.hikaricp,
     dependencies.logging.slf4jApi,
-    dependencies.logging.slf4jSimple,
+    dependencies.logging.logback,
     dependencies.logging.log4s,
     dependencies.enumeratum.core,
     dependencies.enumeratum.playJson,
     dependencies.apacheCommons.text,
     dependencies.apacheCommons.codec,
-    dependencies.database.postgresql,
-    dependencies.database.hikaricp,
     dependencies.fastparse,
+    dependencies.macWire,
   )
 
   this.compile
@@ -41,7 +41,7 @@ object server extends ScalaModule with ScalafmtModule with BuildInfo {
     Map(
       "name" -> "cowsay-online",
       "version" -> publishVersion,
-      "scalaVersion" -> scalaVersion()
+      "scalaVersion" -> scalaVersion(),
     )
   }
   override def buildInfoPackageName = Some("cowsayonline")

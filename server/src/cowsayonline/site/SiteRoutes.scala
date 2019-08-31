@@ -7,13 +7,14 @@ import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import cowsay4s.core._
 import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
-import cowsayonline.ServerSettings
-import cowsayonline.site.model.TalkCommand
 import cowsayonline.site.model.TalkCommand.Unmarshallers._
+import cowsayonline.site.model.{OutputType, TalkCommand}
 import cowsayonline.site.views.{About, Cowsay4slack, Home, ListCows}
+import cowsayonline.{RouteProvider, ServerSettings}
 import scalatags.Text.all.Frag
 
-final class SiteRoutes(settings: ServerSettings) {
+final class SiteRoutes(settings: ServerSettings, siteCowsay: SiteCowsay)
+    extends RouteProvider {
 
   def apply(): Route =
     concat(
@@ -40,13 +41,22 @@ final class SiteRoutes(settings: ServerSettings) {
         "message",
         "action".as[CowAction].?,
         "default-cow".as[DefaultCow].?,
-        "mode".as[DefaultCowMode].?)) {
-      (message, cowAction, defaultCow, cowMode) =>
-        val talkCommand =
-          TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
-        val cow = SiteCowsay.talk(talkCommand)
+        "mode".as[DefaultCowMode].?,
+        "outputType".as[OutputType].?,
+      ),
+    ) { (message, cowAction, defaultCow, cowMode, outputType) =>
+      val talkCommand =
+        TalkCommand.withDefaults(message, cowAction, defaultCow, cowMode)
 
-        completeHtml(Home.renderWithCow(cow, talkCommand))
+      outputType.getOrElse(OutputType.defaultValue) match {
+        case OutputType.Text =>
+          val cow = siteCowsay.talkToText(talkCommand)
+          completeHtml(Home.renderWithTextCow(cow, talkCommand))
+        case OutputType.Png =>
+          val cow = siteCowsay.talkToPng(talkCommand)
+          completeHtml(Home.renderWithPngCow(cow, talkCommand))
+      }
+
     }
   }
 

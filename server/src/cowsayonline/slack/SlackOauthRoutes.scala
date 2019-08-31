@@ -7,9 +7,9 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import cowsayonline.ServerSettings
 import cowsayonline.slack.persistence.{NewTeamRegistration, TeamRegistrationDao}
 import cowsayonline.util.SignatureUtils
+import cowsayonline.{RouteProvider, ServerSettings}
 import org.apache.commons.codec.binary.Base64
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,7 +17,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class SlackOauthRoutes(
     settings: ServerSettings,
     teamRegistrationDao: TeamRegistrationDao,
-    slackpiClient: SlackApiClient)(implicit system: ActorSystem) {
+    slackpiClient: SlackApiClient,
+)(implicit system: ActorSystem)
+    extends RouteProvider {
   implicit private val ec: ExecutionContext = system.dispatcher
 
   private val encodedOAuthScopes = Seq("commands").mkString("%20")
@@ -46,15 +48,15 @@ class SlackOauthRoutes(
           token.teamId,
           token.teamName,
           token.accessToken,
-          token.scope)
+          token.scope,
+        )
         _ <- teamRegistrationDao.insertOrUpdate(newRegistration)
 
-      } yield
-        HttpResponse(
-          status = StatusCodes.SeeOther,
-          headers = headers.Location("/") :: Nil,
-          entity = HttpEntity.Empty
-        )
+      } yield HttpResponse(
+        status = StatusCodes.SeeOther,
+        headers = headers.Location("/") :: Nil,
+        entity = HttpEntity.Empty,
+      )
     }
   }
 
@@ -84,7 +86,7 @@ class SlackOauthRoutes(
         Future.fromTry(
           appSignature(state).collect {
             case `base63Signature` => state
-          }
+          },
         )
     }
 }

@@ -8,7 +8,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class TalkResponse(
     response_type: ResponseType,
-    text: String
+    text: String,
 )
 
 object TalkResponse {

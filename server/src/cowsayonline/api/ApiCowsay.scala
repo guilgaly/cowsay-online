@@ -3,11 +3,11 @@ package cowsayonline.api
 import cowsay4s.core.CowSay
 import cowsayonline.api.model.{TalkCommand, TalkResponse}
 
-object ApiCowsay {
+final class ApiCowsay(cowSay: CowSay) {
 
   def talk(talkCommand: TalkCommand): TalkResponse = {
     val cowCommand = talkCommand.toCowCommand
-    val theCowSaid = CowSay.talk(cowCommand)
+    val theCowSaid = cowSay.talk(cowCommand)
     TalkResponse(theCowSaid)
   }
 }

@@ -5,19 +5,20 @@ import cowsay4s.defaults.{DefaultCow, DefaultCowMode}
 import cowsayonline.ServerSettings
 import cowsayonline.slack.model.TalkResponse.ResponseType.{
   ephemeral,
-  in_channel
+  in_channel,
 }
 import cowsayonline.slack.model.{
   SlashCommand,
   TalkCommand,
   TalkCommandText,
-  TalkResponse
+  TalkResponse,
 }
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class SlackCowsay(settings: ServerSettings)(
-    implicit ec: ExecutionContext) {
+final class SlackCowsay(settings: ServerSettings, cowSay: CowSay)(
+    implicit ec: ExecutionContext,
+) {
 
   def talk(command: TalkCommand): Future[TalkResponse] = Future {
     command.text.trim.toLowerCase match {
@@ -63,7 +64,8 @@ final class SlackCowsay(settings: ServerSettings)(
   private def doTalk(
       slashCommand: SlashCommand,
       userId: String,
-      text: String) = {
+      text: String,
+  ) = {
     import TalkCommandText.ParsingError._
 
     TalkCommandText.Parser(text) match {
@@ -92,16 +94,17 @@ final class SlackCowsay(settings: ServerSettings)(
       userId: String,
       cow: DefaultCow,
       mode: DefaultCowMode,
-      message: String) = {
+      message: String,
+  ) = {
     val action = slashCommand.cowAction
     val wrap = MessageWrapping(40)
     val command = CowCommand(cow, message, mode, action, wrap)
 
-    val cowsay = CowSay.talk(command)
+    val cowsayRes = cowSay.talk(command)
 
     val firstLine =
       s"<@$userId> `${slashCommand.command} cow=${cow.cowName} mode=${mode.modeName}`"
-    val escapedCowsay = slackEscape(cowsay)
+    val escapedCowsay = slackEscape(cowsayRes)
     val responseText = s"$firstLine\n```$escapedCowsay```"
 
     TalkResponse(in_channel, responseText)

@@ -1,8 +1,12 @@
 package cowsayonline.api
 
-import akka.http.scaladsl.server.Route
+import com.softwaremill.macwire._
+import cowsay4s.core.CowSay
+import cowsayonline.RouteProvider
 
-final class ApiModule {
+trait ApiModule {
+  def cowSay: CowSay
 
-  lazy val routes: Route = ApiRoutes()
+  lazy val apiCowsay: ApiCowsay = wire[ApiCowsay]
+  lazy val apiRoutes: RouteProvider = wire[ApiRoutes]
 }

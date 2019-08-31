@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import cowsayonline.slack.model.TalkCommand
 import cowsayonline.util.SignatureUtils
-import cowsayonline.{JsonSupport, ServerSettings}
+import cowsayonline.{JsonSupport, RouteProvider, ServerSettings}
 import org.apache.commons.codec.binary.Hex
 
 import scala.concurrent.ExecutionContext
@@ -14,8 +14,10 @@ import scala.concurrent.ExecutionContext
 class SlackCowsayRoutes(
     settings: ServerSettings,
     slackApiClient: SlackApiClient,
-    slackCowsay: SlackCowsay)(implicit ec: ExecutionContext)
-    extends JsonSupport {
+    slackCowsay: SlackCowsay,
+)(implicit ec: ExecutionContext)
+    extends RouteProvider
+    with JsonSupport {
 
   def apply(): Route = (path("talk") & post) {
     (validateSignature & ignoreSslChecks) {

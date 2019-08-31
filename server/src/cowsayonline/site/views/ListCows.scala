@@ -13,12 +13,12 @@ object ListCows extends Page {
       div(cls := "multiline-display")(
         showcaseCow(DefaultCow.defaultValue),
         DefaultCow.nonDefaultValues.map(showcaseCow),
-      )
+      ),
     )
 
   private def showcaseCow(cow: DefaultCow) = {
     val cowPic =
-      CowSay.talk(CowCommand(cow, cow.cowName))
+      CowSay.default.talk(CowCommand(cow, cow.cowName))
 
     tags2.section(
       h3(cow.cowName),

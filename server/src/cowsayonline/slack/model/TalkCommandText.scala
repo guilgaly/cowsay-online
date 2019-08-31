@@ -8,29 +8,33 @@ import scala.collection.immutable
 case class TalkCommandText(
     cow: DefaultCow,
     mode: DefaultCowMode,
-    message: String)
+    message: String,
+)
 
 object TalkCommandText {
 
   def withDefaults(
       cow: Option[DefaultCow],
       mode: Option[DefaultCowMode],
-      message: String): TalkCommandText =
+      message: String,
+  ): TalkCommandText =
     new TalkCommandText(
       cow.getOrElse(DefaultCow.defaultValue),
       mode.getOrElse(DefaultCowMode.defaultValue),
-      message)
+      message,
+    )
 
   object Parser {
     import fastparse._
     import NoWhitespace._
     import ParsingError._
 
-    def apply(text: String)
-      : Either[List[TalkCommandText.ParsingError], TalkCommandText] =
+    def apply(
+        text: String,
+    ): Either[List[TalkCommandText.ParsingError], TalkCommandText] =
       parse(text.trim, parser(_)) match {
-        case Parsed.Success((maybeCowStr, maybeModeStr, message), _) =>
-          val maybeCow = maybeCowStr match {
+        case Parsed.Success((options, message), _) =>
+          val maybeCow = options.get(CmdOption.Cow) match {
             case Some("random") =>
               Right(DefaultCow.randomValue)
             case Some(cowStr) =>
@@ -40,7 +44,7 @@ object TalkCommandText {
             case None =>
               Right(DefaultCow.defaultValue)
           }
-          val maybeMode = maybeModeStr match {
+          val maybeMode = options.get(CmdOption.Mode) match {
             case Some("random") =>
               Right(DefaultCowMode.randomValue)
             case Some(modeStr) =>
@@ -65,22 +69,29 @@ object TalkCommandText {
       }
 
     private def parser[_: P] =
-      P(options ~ AnyChar.rep.! ~ End)
+      P(cmdOptions ~ AnyChar.rep.! ~ End)
 
-    private def options[_: P] =
-      P((cowOpt ~ whitespace.rep(1)).? ~ (modeOpt ~ whitespace.rep(1)).?)
+    private def cmdOptions[_: P] = P(
+      (cmdOptionType ~ "=" ~ notWhitespace ~ whitespace.rep(1)).rep
+        .map(_.toMap),
+    )
 
-    private def cowOpt[_: P] =
-      P("cow=" ~ notWhitespace)
-
-    private def modeOpt[_: P] =
-      P("mode=" ~ notWhitespace)
+    private def cmdOptionType[_: P]: P[CmdOption] = {
+      import CmdOption._
+      P("cow".!.map(_ => Cow) | "mode".!.map(_ => Mode))
+    }
 
     private def whitespace[_: P] =
       CharsWhile(_.isWhitespace)
 
     private def notWhitespace[_: P] =
       CharsWhile(!_.isWhitespace).rep.!
+
+    sealed private trait CmdOption
+    private object CmdOption {
+      case object Cow extends CmdOption
+      case object Mode extends CmdOption
+    }
   }
 
   sealed trait ParsingError extends EnumEntry
