@@ -52,12 +52,11 @@ class SlackOauthRoutes(
         )
         _ <- teamRegistrationDao.insertOrUpdate(newRegistration)
 
-      } yield
-        HttpResponse(
-          status = StatusCodes.SeeOther,
-          headers = headers.Location("/") :: Nil,
-          entity = HttpEntity.Empty,
-        )
+      } yield HttpResponse(
+        status = StatusCodes.SeeOther,
+        headers = headers.Location("/") :: Nil,
+        entity = HttpEntity.Empty,
+      )
     }
   }
 
