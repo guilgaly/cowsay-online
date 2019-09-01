@@ -21,7 +21,7 @@ class SlackCowsayRoutes(
 
   def apply(): Route = (path("talk") & post) {
     (validateSignature & ignoreSslChecks) {
-      formFields(TalkCommand.fields).as(TalkCommand.apply) { command =>
+      formFields(TalkCommand.fields).as(TalkCommand.apply _) { command =>
         slackCowsay.talk(command).flatMap { response =>
           slackApiClient.respondToSlashCommand(command.responseUrl, response)
         }
